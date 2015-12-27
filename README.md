@@ -18,6 +18,8 @@ to different environments.
 This app is assuming that your team is using github as the source control and slack
 for internal team communication.
 
+This is the demo - [ReleaseHub](https://releasehub.herokuapp.com/)
+
 Read the [wiki pages](https://github.com/JIAZHEN/releasehub/wiki) for more details
 
 ## Getting started
@@ -64,6 +66,7 @@ Bootstrap the configuration
 Populate the database
 
     $ rake db:initialise
+
     This task will do the following:
     - `db:drop` Drop the database if exists.
     - `db:create` Create the database.
