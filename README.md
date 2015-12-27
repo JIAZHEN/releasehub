@@ -18,10 +18,12 @@ to different environments.
 This app is assuming that your team is using github as the source control and slack
 for internal team communication.
 
+Read the [wiki pages](https://github.com/JIAZHEN/releasehub/wiki) for more details
+
 ## Getting started
 Clone the application
 
-    $ git clone git@github.com:globaldev/releasehub.git
+    $ git clone git@github.com:JIAZHEN/releasehub.git
 
 Configurate the database. By default it's using MySQL database. Therefore need to
 make sure MySQL is installed and the database credential is correct. You can
