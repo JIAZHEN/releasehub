@@ -1,0 +1,142 @@
+.row
+  .col-lg-12
+    %h1.page-header
+      %i.fa.fa-rocket
+      Deployments
+
+= render "shared/flash_messages"
+
+= paginate @deployments
+
+
+= form_tag deployments_path, method: "get", :class => "bottom-space" do
+  .row
+    .col-sm-6.col-md-2
+      .form-group
+        %label{:for => "env"} Env
+        %input#env.input-sm.form-control{:name => "environments.name", :placeholder => "Environment", :type => "text", :value => params["environments.name"]}/
+    .col-sm-6.col-md-2
+      .form-group
+        %label{:for => "project"} Project
+        %input#project.input-sm.form-control{:name => "project", :placeholder => "Project", :value => params[:project], :type => "text"}/
+    .col-sm-6.col-md-2
+      .form-group
+        %label{:for => "ops"} Ops
+        %input#ops.input-sm.form-control{:name => "ops", :placeholder => "Ops", :value => params[:ops], :type => "text"}/
+    .col-sm-6.col-md-2
+      .form-group
+        %label{:for => "dev"} Dev
+        %input#dev.input-sm.form-control{:name => "dev", :placeholder => "Dev", :value => params[:dev], :type => "text"}/
+  .row
+    .col-sm-6.col-md-3
+      .form-group
+        %label{:for => "from"} From
+        %input#from.input-sm.form-control{:name => "from", :type => "text", :disabled => "disabled"}/
+    .col-sm-6.col-md-3
+      .form-group
+        %label{:for => "to"} To
+        %input#to.input-sm.form-control{:name => "to", :type => "text", :disabled => "disabled"}/
+
+  .row
+    .col-sm-12.bottom-space
+      #datepicker-calendar
+  .row
+    .col-sm-12
+      %button.btn.btn-primary.btn-sm{:type => "submit"}
+        %i.fa.fa-search
+
+.row
+  .col-md-12
+    %table#deployments.display.table.table-hover.table-striped
+      %thead
+        %tr
+          %th DeploymentID
+          %th Release
+          %th Projects
+          %th Environment
+          %th Dev
+          %th Ops
+          %th Status
+          %th Notification
+          %th Created
+          %th
+      %tbody
+        - @deployments.each do |deployment|
+          %tr{:class => status_colour(deployment), :id => deployment.id}
+            %td= link_to deployment.id, deployment_path(deployment)
+            %td= link_to deployment.release.name, release_path(deployment.release)
+            %td
+              %a{"data-target" => "#deploymentProject#{deployment.id}", "data-toggle" => "modal", :type => "button"}
+                - deployment.projects.order(:id => :asc).each do |project|
+                  .btn.btn-default.btn-xs
+                    %i.fa.fa-tag
+                    = project.repository.name
+
+              = render "shared/projects_model", deployment: deployment, projects: deployment.projects.order(id: :asc)
+            %td= deployment.environment.name
+            %td= deployment.dev
+            %td= deployment.operation_logs.map(&:username).uniq.join(",") unless deployment.operation_logs.empty?
+            %td{:id => "deployment-#{deployment.id}-status"}= deployment.status.name
+            %td= deployment.notification_list
+            %td= deployment.created_at.to_s(:db)
+            %td
+              - if !current_username.blank?
+                %a.btn.btn-primary.btn-sm{:href => edit_deployment_path(deployment) }
+                  resubmit
+
+= paginate @deployments
+
+:javascript
+  $(document).ready(function(){
+    $('#deployments').DataTable({
+      "order": [[ 0, "desc" ]],
+      "paging": false,
+      "searching": false,
+      "oLanguage": {
+        "sEmptyTable": "There is no release"
+      }
+    });
+
+    $(".status-select select").change(function() {
+      var deployment_id = $(this).attr("data-deployment");
+      var status_id = $(this).val();
+      var row_target = $('tr[id="' + deployment_id + '"]');
+      var status_target = $('#deployment-' + deployment_id + '-status');
+      $.post("/deployment_update_status",
+        { status_id : status_id, deployment_id : deployment_id},
+        function(response){
+          row_target.removeClass();
+          row_target.addClass(response.colour);
+          status_target.text(response.name);
+        }, "json");
+    });
+    var from, to;
+    var to_date = '#{params[:to] ? params[:to] : ''}';
+    var from_date = '#{params[:from] ? params[:from] : ''}';
+
+    if (from_date && to_date) {
+      to = new Date(to_date);
+      from = new Date(from_date);
+    } else {
+      to = new Date();
+      from = new Date(to.getTime() - 1000 * 60 * 60 * 24 * 14);
+    }
+
+    $('#from').val(from.getFullYear()+'-'+(from.getMonth()+1)+'-'+from.getDate());
+    $('#to').val(to.getFullYear()+'-'+(to.getMonth()+1)+'-' + to.getDate());
+
+    $('#datepicker-calendar').DatePicker({
+      inline: true,
+      date: [from, to],
+      calendars: 3,
+      mode: 'range',
+      position: 'right',
+      current: new Date(to.getFullYear(), to.getMonth() - 1, 1),
+      onChange: function(dates,el) {
+        $('#from').val(dates[0].getFullYear()+'-'+(dates[0].getMonth()+1)+'-' + dates[0].getDate());
+        $('#to').val(dates[1].getFullYear()+'-'+(dates[1].getMonth()+1)+'-' + dates[1].getDate());
+      }
+    });
+    $('#datepicker-calendar .datepicker').attr('style', 'display: block; position: relative; width: 480px; height: 160px;');
+    $('#datepicker-calendar .datepicker .datepickerContainer').attr('style', 'width: 550px; height: 140px;');
+  });

@@ -1,0 +1,88 @@
+#release-wrap
+  .row
+    .col-lg-12
+      %h1.page-header
+        %i.fa.fa-space-shuttle
+        = "Release - #{@release.id}"
+
+  .row
+    .summary.col-lg-12
+      %h4 Name
+      %p
+        %mark= @release.name
+      %h4 Summary
+      %p= @release.summary
+
+  .row
+    .delpyoments.col-lg-12
+      %table#deployments.display.table.table-hover.table-striped
+        %thead
+          %tr
+            %th Deployment ID
+            %th Environment
+            %th Status
+            %th Notification List
+            %th Dev
+            %th Projects
+            %th Created At
+            - if ops?
+              %th Operations
+        %tbody
+          - @release.deployments.each do |deployment|
+            %tr{:class => status_colour(deployment)}
+              %td= link_to deployment.id, deployment_path(deployment)
+              %td= deployment.environment.name
+              %td= deployment.status.name
+              %td= deployment.notification_list
+              %td= deployment.dev
+              %td
+                %a{"data-target" => "#deploymentProject#{deployment.id}", "data-toggle" => "modal", :type => "button"}
+                  - deployment.projects.each do |project|
+                    .btn.btn-default.btn-xs
+                      %i.fa.fa-tag
+                      = project.repository.name
+
+                .projects-model.modal.fade{:id => "deploymentProject#{deployment.id}", "aria-hidden" => "true", "aria-labelledby" => "deploymentProjectLabel", :role => "dialog", :tabindex => "-1"}
+                  .modal-dialog
+                    .modal-content
+                      .modal-header
+                        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+                          %span{"aria-hidden" => "true"} ×
+                        %h4#deploymentProjectLabel.modal-title Projects
+                      .modal-body
+                        - deployment.projects.each do |project|
+                          .caption
+                            %h4
+                              %mark= project.repository.name
+
+                            %label Branch
+                            %code= project.branch.name
+                            %br
+
+                            %label SHA
+                            %code= project.sha
+                            %br
+
+                            %label Deployment Instruction
+                            %p= project.deployment_instruction
+
+                            %label Rollback Instruction
+                            %p= project.rollback_instruction
+                            %hr
+              %td= deployment.created_at.to_s(:db)
+              - if ops?
+                %td
+                  %select{:name => "status"}
+                    - @deployment_status.each do |status|
+                      %option{:value => status.id, :selected => deployment.status == status ? "selected" : nil}= status.name
+
+:javascript
+  $(document).ready(function(){
+    $('#deployments').DataTable({
+      "order": [[ 0, "desc" ]],
+      "paging": false,
+      "oLanguage": {
+        "sEmptyTable": "There is no deployment"
+      }
+    });
+  });

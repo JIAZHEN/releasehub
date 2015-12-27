@@ -1,0 +1,55 @@
+.projects-model.modal.fade{:id => "deploymentProject#{deployment.id}", "aria-hidden" => "true", "aria-labelledby" => "deploymentProjectLabel", :role => "dialog", :tabindex => "-1"}
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+          %span{"aria-hidden" => "true"} ×
+        %h4#deploymentProjectLabel.modal-title
+          Projects to
+          %mark= deployment.environment.name
+      .modal-body
+        .caption
+          %h4
+            Release
+            %small= deployment.release.name
+          %br/
+
+          %label Summanry
+          %p= deployment.release.summary
+          %br/
+
+          - if ops?
+            %h4 Operations commands
+            - projects.each do |project|
+              %p.project-command
+                - if deployment.environment.production?
+                  = "#{deployment.environment.name} #{project.repository.name} #{project.sha}"
+                - else
+                  = "#{deployment.environment.name} #{project.repository.name} #{project.branch.name}"
+
+
+            %h4 Operations
+            .status-select
+              %select{:name => "status", :id => "model-deployment-status#{deployment.id}", "data-deployment" => deployment.id}
+                - @deployment_status.each do |status|
+                  %option{:value => status.id, :selected => deployment.status == status ? "selected" : nil}= status.name
+
+
+          - projects.each do |project|
+            %h4
+              %mark= project.repository.name
+
+            %label Branch
+            %code= project.branch.name
+            %br
+
+            %label SHA
+            %code= project.sha
+            %br
+
+            %label Deployment Instruction
+            %p= markdown.render(project.deployment_instruction).html_safe
+
+            %label Rollback Instruction
+            %p= markdown.render(project.rollback_instruction).html_safe
+            %hr

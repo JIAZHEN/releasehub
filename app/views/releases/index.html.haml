@@ -1,0 +1,64 @@
+.row
+  .col-lg-12
+    %h1.page-header
+      %i.fa.fa-space-shuttle
+      Releases
+
+= render "shared/flash_messages"
+
+= paginate @releases
+
+.row
+  .col-md-12
+    %table#releases.display.table.table-hover.table-striped
+      %thead
+        %tr
+          %th ReleaseID
+          %th Name
+          %th Summary
+          %th Deployments
+          %th Status
+          %th Created
+          - if ops?
+            %th Operations
+      %tbody
+        - @releases.each do |release|
+          %tr{:class => status_colour(release), :id => release.id}
+            %td= link_to release.id, release_path(release)
+            %td= release.name
+            %td= release.summary
+            %td= link_to release.deployments.size, release_path(release)
+            %td{:id => "release-#{release.id}-status"}= release.status.name
+            %td= release.created_at.to_s(:db)
+            - if ops?
+              %td
+                %select{:name => "status"}
+                  - @releases_status.each do |status|
+                    %option{:value => status.id, :selected => release.status == status ? "selected" : nil}= status.name
+
+= paginate @releases
+
+:javascript
+  $(document).ready(function(){
+    $('#releases').DataTable({
+      "order": [[ 0, "desc" ]],
+      "paging": false,
+      "oLanguage": {
+        "sEmptyTable": "There is no release"
+      }
+    });
+
+    $("select[name='status']").change(function() {
+      var status_id = $(this).val();
+      var row_target = $(this).closest('tr');
+      var release_id = row_target.attr('id');
+      var status_target = $('#release-' + release_id + '-status');
+      $.post("/release_update_status",
+        { status_id : status_id, release_id : release_id},
+        function(response){
+          row_target.removeClass();
+          row_target.addClass(response.colour);
+          status_target.text(response.name);
+        }, "json");
+    });
+  });

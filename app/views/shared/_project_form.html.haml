@@ -1,0 +1,115 @@
+.projects-wrap.col-xs-12.col-sm-12.col-md-12.col-lg-12
+  .row.box
+    %h4 Project
+    .form-group
+      %label.col-sm-3.control-label{:for => "repository"} Repository
+      .col-sm-5
+        %input.repository.form-control{:placeholder => "Name of the repository", :autocomplete => "off", "data-provide" => "typeahead", :type => "text", "data-source" => @repositories.map{|repo| repo.name}.to_json, :name => "deployment[projects][repositories][]", :required => "", :value => project ? project.repository.name : nil }/
+        .help-block.with-errors
+
+    .form-group
+      %label.col-sm-3.control-label{:for => "branch"} Branch
+      .col-sm-5
+        %select.branch.form-control{:name => "deployment[projects][branches][]", :required => ""}
+          - if project
+            - project.repository.active_branches.each do |branch|
+              %option{:value => branch.id, :selected => project.branch == branch ? "selected" : nil}= branch.name
+        .help-block.with-errors
+      .col-sm-1
+        %a.sync.btn.btn-primary.btn-sm.ladda-button{"data-placement" => "bottom", "data-toggle" => "tooltip", :title => "Update when branch is not listed", "data-style" => "expand-left"}
+          %span.ladda-label Sync Branch List
+
+    .form-group
+      %label.col-sm-3.control-label{:for => "SHA"} SHA
+      .col-sm-7
+        %input.sha.form-control{:placeholder => "SHA", :type => "text", :name => "deployment[projects][shas][]", :required => "", :value => project ? project.sha : nil}/
+        .help-block.with-errors
+
+    .form-group
+      %label.col-sm-3.control-label{:for => "Deployment Instructions"} Deployment Instructions
+      .col-sm-7
+        %textarea.form-control{:rows => "5", :name => "deployment[projects][deployment_instructions][]", :required => ""}= project.try(:deployment_instruction) || "- Deploy\n- Restart"
+        .help-block.with-errors
+
+    .form-group
+      %label.col-sm-3.control-label{:for => "Rollback Instructions"} Rollback Instructions
+      .col-sm-7
+        %textarea.form-control{:rows => "5", :name => "deployment[projects][rollback_instructions][]", :required => ""}= project.try(:rollback_instruction) || "N/A"
+        .help-block.with-errors
+      .col-sm-1
+        %a.trash{:href => "#"}
+          %i.fa.fa-trash.fa-fw
+
+:javascript
+  $(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+
+    // remove form
+    $('.trash').click(function(e){
+      $(this).parents('.projects-wrap')[0].remove();
+    });
+
+    // enable tab
+    $("textarea").keydown(function(e) {
+      if(e.keyCode === 9) { // tab was pressed
+          // get caret position/selection
+          var start = this.selectionStart;
+          var end = this.selectionEnd;
+
+          var $this = $(this);
+          var value = $this.val();
+
+          // set textarea value to: text before caret + tab + text after caret
+          $this.val(value.substring(0, start)
+                      + "\t"
+                      + value.substring(end));
+
+          // put caret at right position again (add one for the tab)
+          this.selectionStart = this.selectionEnd = start + 1;
+
+          // prevent the focus lose
+          e.preventDefault();
+      }
+    });
+
+    // sync branches from github
+    $('.sync').click(function(e){
+      e.preventDefault();
+      var l = Ladda.create(this);
+      l.start();
+      var value = $(this).closest(".form-group").parent().find(".repository").val();
+      var form_group = $(this).closest('.form-group');
+      var branch_element = form_group.find('.branch');
+      $.post("/get_branches",
+        { repository : value, type : "sync" },
+        function(response){
+          if (response["error"] == undefined) {
+            update_branch(branch_element, response);
+            changeSha(branch_element);
+          } else {
+            form_group.toggleClass("has-error");
+            form_group.find('.help-block.with-errors').text(response["error"]);
+          }
+        }, "json")
+      .always(function() { l.stop(); });
+      return false;
+    });
+
+    // get branch sha
+    $('.branch').change(function(e){
+      changeSha($(this));
+    });
+
+    var typingTimer = 0;                // timer identifier
+    var doneTypingInterval = 1500;  // time in ms
+
+    $('.repository').keyup(function(){
+      clearTimeout(typingTimer);
+      typingTimer = setTimeout(doneTyping, doneTypingInterval, $(this));
+    });
+
+    $('.repository').keydown(function(){
+      clearTimeout(typingTimer);
+    });
+
+  });

@@ -1,0 +1,18 @@
+.row
+  .col-lg-12
+    %h1.page-header
+      %i.fa.fa-user
+      Account
+
+= render "shared/flash_messages"
+
+.row
+  .col-sm-12
+    = form_for(current_user) do |f|
+      .form-group
+        %label{:for => "name"} Name
+        %input.form-control{:placeholder => "Name", :name => "name", :type => "text", :value => current_user.name, :disabled => "disabled"}/
+      .form-group
+        %label{:for => "slack_username"} Slack username
+        %input.form-control{:placeholder => "slack_username", :name => "slack_username", :type => "text", :value => current_user.slack_username}/
+      %button.btn.btn-primary.btn-sm{:type => "submit"} Submit

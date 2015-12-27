@@ -1,0 +1,33 @@
+.col-md-6.col-sm-12.col-xs-12
+  .panel{:class => "panel-#{env_to_colour(env.name)}"}
+    .panel-heading
+      .row
+        .env-icon.col-xs-2
+          %span.fa-stack.fa-3x.fa-fw
+            %i.fa.fa-television.fa-stack-2x
+            %strong.fa-stack-1x.television-text= env_name(env)
+        .env-details.col-xs-10
+          - if deployment
+            %dl.dl-horizontal
+              %dt Dev
+              %dd= deployment.dev
+              %dt Notification list
+              %dd= deployment.notification_list
+              %dt Repositories
+              %dd
+                - deployment.projects.order(:id => :asc).each do |project|
+                  %a.btn.btn-default.btn-xs{:href => sha_url(project.repository.name, project.sha)}
+                    %i.fa.fa-tag
+                    = project.repository.name
+              %dt Submitted at
+              %dd= deployment.created_at.to_s(:db)
+
+    %a{:href => releases_path}
+      .panel-footer
+        %span.pull-left
+          %a{:href => (release_path(deployment.release) if deployment) }
+            = deployment.release.summary if deployment
+        %span.pull-right
+          %a{:href => (release_path(deployment.release) if deployment) }
+            %i.fa.fa-arrow-circle-right
+        .clearfix

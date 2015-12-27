@@ -1,0 +1,49 @@
+// Place all the styles related to the Releases controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+.form-header {
+  margin-top: 0px;
+}
+
+.form-header-underline {
+  padding-bottom: 20px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.plus-link {
+  color: #3c763d;
+}
+
+.small-header {
+  color: #777;
+}
+
+.github-info-container {
+
+  item {
+    background-color:#007ba7; color:#FFF;
+  }
+
+  h4 {
+    text-align: center;
+  }
+
+  .box {
+    border:1px solid #efefef;margin:5px; box-shadow:5px 8px 8px 0 #ccc;
+  }
+
+  .trash {
+    color: #c7254e;
+  }
+}
+
+#release-wrap {
+  .summary {
+    margin-bottom: 1.5%;
+
+    h4 {
+      margin-bottom: 1%;
+    }
+  }
+}

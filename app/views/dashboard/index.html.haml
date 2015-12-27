@@ -1,0 +1,58 @@
+- if authenticated?
+  .row
+    .col-lg-12
+      %h1.page-header
+        %i.fa.fa-globe
+        ReleaseHub
+
+  .row
+    .col-lg-12
+      .panel.panel-default
+        .panel-heading
+          %i.fa.fa-bars.fa-fw
+          Deployment Request Status
+        / /.panel-heading
+        .panel-body
+          .row
+            - @lastest_deployments.each do |deployment|
+              .col-md-6.col-sm-6
+                .latest-deployment.btn-group
+                  .btn.btn-default{"data-target" => "#deploymentProject#{deployment.id}", "data-toggle" => "modal", :type => "button"}
+                    = deployment.id
+                  .btn.fixed-width{"data-target" => "#deploymentProject#{deployment.id}", "data-toggle" => "modal", :type => "button", :class => "btn-#{status_colour(deployment)}", :id => "btn-status-#{deployment.id}"}
+                    = "#{deployment.environment.name} - #{deployment.repo_names}"
+                  .btn{"data-target" => "#deploymentProject#{deployment.id}", "data-toggle" => "modal", :type => "button", :class => "btn-#{status_colour(deployment)} ", :id => "btn-status-name-#{deployment.id}"}
+                    = deployment.status.name
+                  = render "shared/projects_model", deployment: deployment, projects: deployment.projects.order(id: :asc)
+
+  .row
+    .col-lg-12
+      %h2.page-header
+        %mark Test boxes
+
+  - @boxes_info.keys.in_groups_of(2, false).each do |group|
+    .row
+      - group.each do |env|
+        = render "environment_status", env: env, deployment: @boxes_info[env]
+
+  :javascript
+    $(document).ready(function(){
+      $('.status-select select').change(function() {
+        var deployment_id = $(this).attr("data-deployment");
+        var status_id = $(this).val();
+        var btn_target = $('#btn-status-' + deployment_id);
+        var btn_name_target = $('#btn-status-name-' + deployment_id);
+        $.post("/deployment_update_status",
+          { status_id : status_id, deployment_id : deployment_id},
+          function(response){
+            btn_target.removeClass();
+            btn_name_target.removeClass();
+            btn_target.addClass('btn btn-' + response.colour);
+            btn_name_target.addClass('btn btn-' + response.colour);
+            btn_name_target.text(response.name + ' by ' + response.ops);
+          }, "json");
+      });
+    });
+
+- else
+  = render "shared/flash_messages"

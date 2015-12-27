@@ -1,0 +1,71 @@
+#release-wrap
+  .row
+    .col-lg-12
+      %h1.page-header
+        %i.fa.fa-rocket
+        = "Deployment - #{@deployment.id}"
+        - if !current_username.blank?
+          %a.btn.btn-primary.btn-sm{:href => edit_deployment_path(@deployment)}
+            resubmit
+
+  .row
+    .summary.col-lg-12
+      %h4 Related release
+      %p
+        = link_to @deployment.release.name, release_path(@deployment.release)
+  .row
+    .summary.col-lg-4
+      %h4 Deploy to
+      %mark= @deployment.environment.name
+
+    .summary.col-lg-4
+      %h4 Operation history
+      %table.table.table-hover.table-condensed
+        - @deployment.operation_logs.each do |log|
+          %tr
+            %td= log.username
+            %td= log.status.name
+            %td= log.created_at.to_s(:db)
+
+    .summary.col-lg-4
+      %h4 Notification list
+      %p= @deployment.notification_list
+
+    - if ops?
+      .summary.col-lg-4
+        %h4 Operations
+        %select{:name => "status"}
+          - @deployment_status.each do |status|
+            %option{:value => status.id, :selected => @deployment.status == status ? "selected" : nil}= status.name
+
+  .row
+    - @deployment.projects.order(id: :asc).each do |project|
+      .col-lg-4
+        %h4
+          %mark= project.repository.name.capitalize
+
+        %label Branch
+        %code= project.branch.name
+        %br
+
+        %label SHA
+        %code= project.sha
+        %br
+
+        %label Deployment Instruction
+        %p= markdown.render(project.deployment_instruction).html_safe
+
+        %label Rollback Instruction
+        %p= markdown.render(project.rollback_instruction).html_safe
+        %hr
+
+:javascript
+  $(document).ready(function(){
+    $("select[name='status']").change(function() {
+      var status_id = $(this).val();
+      $.post("/deployment_update_status",
+        { status_id : status_id, deployment_id : #{@deployment.id}},
+        function(response){
+        }, "json");
+    });
+  });

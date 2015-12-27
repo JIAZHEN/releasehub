@@ -1,0 +1,67 @@
+%nav.navbar.navbar-default.navbar-static-top{:role => "navigation", :style => "margin-bottom: 0"}
+  .navbar-header
+    %button.navbar-toggle{"data-target" => ".navbar-collapse", "data-toggle" => "collapse", :type => "button"}
+      %span.sr-only Toggle navigation
+      %span.icon-bar
+      %span.icon-bar
+      %span.icon-bar
+    %a.navbar-brand{:href => root_path} ReleaseHub
+  / /.navbar-header
+  %ul.nav.navbar-top-links.navbar-right
+    - if authenticated?
+      %li
+        %a{:href => edit_user_path(current_user)}
+          - if !current_username.blank?
+            %i.fa.fa-slack
+            = current_username
+          - else
+            %span.label.label-danger
+              %i.fa.fa-exclamation-circle
+              Please config your slack username
+
+      %li.dropdown
+        %a.dropdown-toggle{"data-toggle" => "dropdown", :href => "#"}
+          = image_tag(current_user.avatar_url, :size => "20x20")
+          = current_user.name
+          %i.fa.fa-caret-down
+        %ul.dropdown-menu.dropdown-user
+          %li
+            %a{:href => edit_user_path(current_user)}
+              %i.fa.fa-user.fa-fw
+              Account
+          %li
+            %a{:href => logout_path, "data-method" => "delete"}
+              %i.fa.fa-sign-out.fa-fw
+              Logout
+    - else
+      %li
+        %a{:href => login_path} Login with Github
+
+  - if authenticated?
+    .navbar-default.sidebar{:role => "navigation"}
+      .sidebar-nav.navbar-collapse
+        %ul#side-menu.nav
+          %li
+            %a{:href => root_path}
+              %i.fa.fa-dashboard.fa-fw
+              Dashboard
+
+          %li{:class => ("disabled" unless !current_username.blank?)}
+            %a{:href => new_deployment_path}
+              %i.fa.fa-pencil.fa-fw
+              Make a Release Request
+
+          %li{:class => ("disabled" unless !current_username.blank?)}
+            %a{:href => releases_path}
+              %i.fa.fa-bars.fa-fw
+              Releases
+
+          %li{:class => ("disabled" unless !current_username.blank?)}
+            %a{:href => deployments_path}
+              %i.fa.fa-table.fa-fw
+              Deployments
+
+          %li
+            %a{:href => edit_user_path(current_user)}
+              %i.fa.fa-user.fa-fw
+              Account

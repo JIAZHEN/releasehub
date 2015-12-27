@@ -1,0 +1,123 @@
+.row
+  .col-lg-12
+    %h1.page-header Make a Release Request
+
+= render "shared/flash_messages"
+
+%form#new_release.form-horizontal{"accept-charset" => "UTF-8", :action => "/deployments", :method => "post", "data-toggle" => "validator"}
+  %input{:name => "authenticity_token", :type => "hidden", :value => form_authenticity_token}/
+
+  .form-group
+    %label.col-sm-3.control-label{:for => "release"}
+      Release
+      %small (e.g. PB reference of the story)
+    .col-sm-5
+      %input.release.typeahead.form-control{:placeholder => "Name of the release", :autocomplete => "off", "data-provide" => "typeahead", :type => "text", :name => "release_name", :required => "", :value => @release.name, :maxlength => "75" }/
+      %span.help-block
+        Choose from existings or create new one (up to 75 characters)
+      .help-block.with-errors
+
+  .form-group
+    %label.col-sm-3.control-label{:for => "summary"} Summary
+    .col-sm-5
+      %textarea.form-control{:rows => "5", :maxlength => "255", :name => "release_summary", :required => "", :placeholder => "Describe the release in plain english"}= @release.summary
+      %span#summary-countdown.help-block
+      .help-block.with-errors
+
+  .form-group.form-header-underline
+    %h4.col-sm-3.form-header.control-label
+      %i.fa.fa-info-circle
+      Deployment Information
+
+  .form-group
+    %label.col-sm-3.control-label{:for => "environment"} Environment
+    .col-sm-2
+      %select.environment.form-control{:name => "deployment[environment_id]", :required => ""}
+        - @environments.each do |environment|
+          %option{:value => environment.id, :selected => @deployment.environment_id == environment.id ? "selected" : nil}= environment.name
+      .help-block.with-errors
+
+  .form-group
+    %label.col-sm-3.control-label{:for => "notification_list"} Notify
+    .col-sm-5
+      %input.notify.typeahead.form-control{:type => "text", :name => "deployment[notification_list]", :required => "", :autocomplete => "off", "data-provide" => "typeahead", :value => @deployment.notification_list}/
+      %span.help-block
+        use
+        %code ,
+        as the separator
+      .help-block.with-errors
+
+  .form-group.form-header-underline
+    %h4.col-sm-3.form-header.control-label
+      %a.plus-link{:href => "#", "data-placement" => "bottom", "data-toggle" => "tooltip", :title => "Click to add more projects",}
+        %i.fa.fa-plus-circle
+      Application(s)
+    .col-sm-5.small-header
+      The order of the apps submitted would be the order for OPS to deploy.
+
+  .github-info-container.form-header-underline
+    #app-area.row
+      - if !@deployment.projects.empty?
+        - @deployment.projects.order(:id => :asc).each do |project|
+          = render "shared/project_form", project: project
+      - else
+        = render "shared/project_form", project: nil
+
+  .form-group
+    .col-sm-offset-2.col-sm-1
+      %button.btn.btn-success{:type => "submit"} Submit
+
+:javascript
+  $(document).ready(function(){
+
+    var text_max = 255;
+    var text_length = $('textarea[name=release_summary]').val().length;
+    var text_remaining = text_max - text_length;
+    $('#summary-countdown').html(text_remaining + ' characters remaining');
+
+    $('textarea[name=release_summary]').keyup(function() {
+        var text_length = $('textarea[name=release_summary]').val().length;
+        var text_remaining = text_max - text_length;
+        $('#summary-countdown').html(text_remaining + ' characters remaining');
+    });
+
+    setDefaultNotify($('select.environment option:selected').text(), '#{DeploymentsHelper::DEFAULT_CHANNEL}', '#{DeploymentsHelper::DEFAULT_NOTIFY_IDS}');
+    $('select.environment').change(function(e){
+      var selected_text = $('select.environment option:selected').text();
+      setDefaultNotify(selected_text, '#{DeploymentsHelper::DEFAULT_CHANNEL}', '#{DeploymentsHelper::DEFAULT_NOTIFY_IDS}');
+    });
+
+    $('input.release.typeahead').typeahead({
+      source: #{@releases.to_json},
+      autoSelect: true,
+      limit: 10,
+      afterSelect: function(item){
+        $('textarea[name="release_summary"]').val(item.summary);
+      },
+      matcher: typeahead_matcher
+    });
+
+    $('input.notify.typeahead').typeahead({
+      source: #{slack_notify_list},
+      autoSelect: true,
+      limit: 10,
+      updater: function(item){
+        array = this.query.split(",");
+        array = array.slice(0, array.length - 1);
+        array.push(item.name);
+        query = array.join();
+        return { name: query };
+      },
+      matcher: typeahead_matcher
+    });
+
+    $('.branch').each(function() {
+      changeSha($(this));
+    });
+
+    // plus form
+    $('.plus-link').click(function(e){
+      $('#app-area').append('#{j render 'shared/project_form', project: nil}');
+    });
+
+  });
