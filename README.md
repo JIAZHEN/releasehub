@@ -23,7 +23,7 @@ This is the demo - [ReleaseHub](https://releasehub.herokuapp.com/)
 Read the [wiki pages](https://github.com/JIAZHEN/releasehub/wiki) for more details
 
 ## Getting started
-Clone the application
+### Clone the application
 
     $ git clone git@github.com:JIAZHEN/releasehub.git
 
@@ -31,21 +31,21 @@ Configurate the database. By default it's using MySQL database. Therefore need t
 make sure MySQL is installed and the database credential is correct. You can
 of course change to other database.
 
-Install gems
+### Install gems
 
     $ cd releasehub
     $ bundle install
 
-Setup github authentication
+### Setup github authentication
 
-    - Create a new application on https://github.com/settings/applications/new,
-      more details at https://developer.github.com/guides/basics-of-authentication/.
-    - Once it's created, record the `Client ID` and `Client Secret`.
-    - Create an access token on https://github.com/settings/tokens/new,
-      select scopes `repo` and `user`. This will allow ReleaseHub to pull data
-      from the organisation.
+- Create a new application on https://github.com/settings/applications/new,
+  more details at https://developer.github.com/guides/basics-of-authentication/.
+- Once it's created, record the `Client ID` and `Client Secret`.
+- Create an access token on https://github.com/settings/tokens/new,
+  select scopes `repo` and `user`. This will allow ReleaseHub to pull data
+  from the organisation.
 
-Create `config/development.env` file with variables
+### Create `config/development.env` file with the following variables
 
     export GITHUB_CLIENT_ID= # github application client ID
     export GITHUB_CLIENT_SECRET= # github application client secret
@@ -59,26 +59,32 @@ Create `config/development.env` file with variables
     # the slack ID of channel that need to be notified as default
     export DEFAULT_CHANNEL=
 
-Bootstrap the configuration
+### Bootstrap the configuration
 
     $ rake bootstrap
 
-Populate the database
+### Populate the database
 
     $ rake db:initialise
 
-    This task will do the following:
-    - `db:drop` Drop the database if exists.
-    - `db:create` Create the database.
-    - `db:migrate` Build the database.
-    - `db:populate` Insert `qa1,qa2,qa3,qa4,qa5,uat1,uat2,production` to environments table,
-      and insert `waiting to deploy,deploying,deployed,rollback,open,finish,cancelled` to
-      statuses table.
-    - `db:github_repo` Pull all the repositories from the organisation and
-      insert into repositories table.
+This task will do the following:
 
-Start the app locally
+- `db:drop` Drop the database if exists.
+- `db:create` Create the database.
+- `db:migrate` Build the database.
+- `db:populate` Insert `qa1,qa2,qa3,qa4,qa5,uat1,uat2,production` to environments table,
+  and insert `waiting to deploy,deploying,deployed,rollback,open,finish,cancelled` to
+  statuses table.
+- `db:github_repo` Pull all the repositories from the organisation and
+  insert into repositories table.
+
+### Start the app locally
 
     $ rails s
 
-Visit http://localhost:3000
+Visit [http://localhost:3000](http://localhost:3000)
+
+## Licensing and Attribution
+ReleaseHub is released under the MIT license as detailed in the LICENSE file that should be distributed with this library; the source code is freely available.
+
+ReleaseHub was developed by [Jiazhen Xie](http://sheerdevelopment.com/) while employed by [Venntro Media Group](http://www.venntro.com/). Venntro Media Group have kindly agreed to the extraction and release of this software under the license terms above.
