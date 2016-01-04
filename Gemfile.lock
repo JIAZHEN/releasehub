@@ -111,6 +111,7 @@ GEM
     nprogress-rails (0.1.6.7)
     octokit (3.8.0)
       sawyer (~> 0.6.0, >= 0.5.3)
+    pg (0.18.4)
     rack (1.6.2)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -213,6 +214,7 @@ DEPENDENCIES
   mysql2
   nprogress-rails
   octokit
+  pg
   rails
   redcarpet
   rspec-rails
