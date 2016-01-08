@@ -1,7 +1,7 @@
 namespace :db do
   desc "Fill database with initial data"
   task populate: :environment do
-    %w{ qa1 qa2 qa3 qa4 qa5 uat1 uat2 production }.each do |env|
+    %w{ test staging production }.each do |env|
       Environment.find_or_create_by(name: env)
     end
 

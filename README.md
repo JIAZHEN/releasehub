@@ -72,11 +72,8 @@ This task will do the following:
 - `db:drop` Drop the database if exists.
 - `db:create` Create the database.
 - `db:migrate` Build the database.
-- `db:populate` Insert `qa1,qa2,qa3,qa4,qa5,uat1,uat2,production` to environments table,
-  and insert `waiting to deploy,deploying,deployed,rollback,open,finish,cancelled` to
-  statuses table.
-- `db:github_repo` Pull all the repositories from the organisation and
-  insert into repositories table.
+- `db:populate` Insert default environments and statuses.
+- `db:github_repo` Pull all the repositories from the organisation and insert into repositories table.
 
 ### Start the app locally
 

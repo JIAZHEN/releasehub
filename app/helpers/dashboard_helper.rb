@@ -16,7 +16,7 @@ module DashboardHelper
   }
 
   def env_to_colour(environment)
-    ENVIRONMENT_COLOUR[environment]
+    ENVIRONMENT_COLOUR.fetch(environment, "qa")
   end
 
   def env_name(environment)
