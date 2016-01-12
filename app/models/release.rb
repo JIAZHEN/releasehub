@@ -1,10 +1,16 @@
-class Release < ActiveRecord::Base
+class Release
+  include Mongoid::Document
+
+  field :name, type: String
+  field :summary, type: String
+  belongs_to :status
+  has_many :deployments
+
   before_save :default_status
 
   validates :name, presence: true
 
-  belongs_to :status
-  has_many :deployments
+  index({ name: 1 }, { unique: true })
 
   private
 

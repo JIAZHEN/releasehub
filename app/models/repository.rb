@@ -1,4 +1,4 @@
-class Repository < ActiveRecord::Base
+class Repository
   validates :name, presence: true, length: { maximum: 50 }
 
   has_many :branches

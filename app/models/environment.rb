@@ -1,4 +1,4 @@
-class Environment < ActiveRecord::Base
+class Environment
   validates :name, presence: true, length: { maximum: 15 }
 
   PRODUCTION = "production"

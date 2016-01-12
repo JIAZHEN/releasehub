@@ -1,4 +1,4 @@
-class User < ActiveRecord::Base
+class User
   before_create :create_remember_token
 
   def User.new_remember_token

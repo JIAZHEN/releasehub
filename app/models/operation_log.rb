@@ -1,4 +1,4 @@
-class OperationLog < ActiveRecord::Base
+class OperationLog
   validates :status_id, presence: true
   validates :deployment_id, presence: true
 

@@ -1,4 +1,4 @@
-class Deployment < ActiveRecord::Base
+class Deployment
   validates :release_id, presence: true
   validates :status_id, presence: true
   validates :environment_id, presence: true
