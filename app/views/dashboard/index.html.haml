@@ -45,11 +45,15 @@
         $.post("/deployment_update_status",
           { status_id : status_id, deployment_id : deployment_id},
           function(response){
-            btn_target.removeClass();
-            btn_name_target.removeClass();
-            btn_target.addClass('btn btn-' + response.colour);
-            btn_name_target.addClass('btn btn-' + response.colour);
-            btn_name_target.text(response.name + ' by ' + response.ops);
+            if (!!response.error) {
+              alert(response.error);
+            } else {
+              btn_target.removeClass();
+              btn_name_target.removeClass();
+              btn_target.addClass('btn btn-' + response.colour);
+              btn_name_target.addClass('btn btn-' + response.colour);
+              btn_name_target.text(response.name + ' by ' + response.ops);
+            }
           }, "json");
       });
     });

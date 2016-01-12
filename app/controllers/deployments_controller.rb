@@ -59,11 +59,18 @@ class DeploymentsController < ApplicationController
 
   def update_status
     @deployment = Deployment.find(params["deployment_id"])
-    @deployment.update(status_id: params["status_id"])
-    # record the operations
-    OperationLog.create!(username: current_username, status_id: params["status_id"],
-      deployment_id: params["deployment_id"])
-    result = { name: @deployment.status.name, colour: status_colour(@deployment), ops: current_username }
+    last_operator = @deployment.operation_logs.last.username
+
+    if current_username != last_operator && @deployment.status_id != Status::WAIT_TO_DEPLOY
+      result = { error: "The deployment is currently #{@deployment.status.name} by #{last_operator}" }
+    else
+      @deployment.update(status_id: params["status_id"])
+      # record the operations
+      OperationLog.create!(username: current_username, status_id: params["status_id"],
+        deployment_id: params["deployment_id"])
+      result = { name: @deployment.status.name, colour: status_colour(@deployment), ops: current_username }
+    end
+
     respond_with_json result
   end
 
