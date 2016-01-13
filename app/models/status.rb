@@ -1,5 +1,6 @@
 class Status
   include Mongoid::Document
+  include Mongoid::Timestamps
 
   WAIT_TO_DEPLOY = "wait_to_deploy"
   DEPLOYING = "deploying"
