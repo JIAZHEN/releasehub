@@ -19,4 +19,8 @@ class Deployment < ActiveRecord::Base
   def notify_people?
     NOTIFY_STATUS.include?(status_id)
   end
+
+  def last_operator
+    operation_logs.last
+  end
 end

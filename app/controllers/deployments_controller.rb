@@ -1,7 +1,6 @@
 class DeploymentsController < ApplicationController
 
   before_action :setup, :only => [:new, :edit]
-  after_action :notify, :only => [:create, :update_status]
 
   SEARCH_KEYS = {
     "release" => "releases.summary",
@@ -31,6 +30,7 @@ class DeploymentsController < ApplicationController
     end
 
     flash[:success] = "Thank you, the request has been submitted. It should be deployed shortly."
+    notify
     redirect_to new_deployment_path
   end
 
@@ -59,7 +59,7 @@ class DeploymentsController < ApplicationController
 
   def update_status
     @deployment = Deployment.find(params["deployment_id"])
-    last_operator = @deployment.operation_logs.last.try(:username)
+    last_operator = @deployment.last_operator.try(:username)
 
     if last_operator && current_username != last_operator && @deployment.status_id != Status::WAIT_TO_DEPLOY
       result = { error: "The deployment is currently #{@deployment.status.name} by #{last_operator}" }
@@ -69,6 +69,7 @@ class DeploymentsController < ApplicationController
       OperationLog.create!(username: current_username, status_id: params["status_id"],
         deployment_id: params["deployment_id"])
       result = { name: @deployment.status.name, colour: status_colour(@deployment), ops: current_username }
+      notify
     end
 
     respond_with_json result
@@ -144,6 +145,6 @@ class DeploymentsController < ApplicationController
 
   def channels
     list = @deployment.notification_list.split(",")
-    list.uniq.reject{ |channel| channel.start_with?("@") }
+    list.uniq
   end
 end
