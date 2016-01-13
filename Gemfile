@@ -17,7 +17,6 @@ gem "nprogress-rails"
 gem "redcarpet"
 gem "dotenv-rails"
 gem "therubyracer"
-gem "pg"
 
 group :development, :test do
   gem "byebug"
