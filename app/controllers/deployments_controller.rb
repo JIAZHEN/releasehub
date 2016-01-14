@@ -145,6 +145,6 @@ class DeploymentsController < ApplicationController
 
   def channels
     list = @deployment.notification_list.split(",")
-    list.uniq
+    list.uniq.reject{ |channel| channel.start_with?("@") }
   end
 end
