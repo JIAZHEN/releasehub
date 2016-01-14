@@ -41,7 +41,7 @@ RSpec.describe Release, type: :model do
 
     it "set to open as default" do
       @release.save
-      expect(@release.status_id).to eq(Status::OPEN)
+      expect(@release.status.name).to eq(Status::OPEN)
     end
   end
 end

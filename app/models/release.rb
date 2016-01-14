@@ -11,11 +11,11 @@ class Release
 
   validates :name, presence: true
 
-  index({ name: 1 }, { unique: true })
+  index({ name: 1 })
 
   private
 
   def default_status
-    self.status_id ||= Status::OPEN
+    self.status_id ||= Status.find_by(:name => Status::OPEN).id
   end
 end

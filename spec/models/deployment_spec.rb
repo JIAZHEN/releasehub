@@ -16,8 +16,10 @@ RSpec.describe Deployment, type: :model do
   it { is_expected.to respond_to(:operation_logs) }
 
   describe "#notify_people?" do
+    let(:deployment) { create(:deployment) }
+
     context "when status is OPEN" do
-      before { deployment.status_id = Status::OPEN }
+      before { deployment.status.name = Status::OPEN }
 
       it "returns false" do
         expect(deployment).not_to be_notify_people
@@ -25,7 +27,7 @@ RSpec.describe Deployment, type: :model do
     end
 
     context "when status is DEPLOYED" do
-      before { deployment.status_id = Status::DEPLOYED }
+      before { deployment.status.name = Status::DEPLOYED }
 
       it "returns true" do
         expect(deployment).to be_notify_people
@@ -33,7 +35,7 @@ RSpec.describe Deployment, type: :model do
     end
 
     context "when status is ROLLBACK" do
-      before { deployment.status_id = Status::ROLLBACK }
+      before { deployment.status.name = Status::ROLLBACK }
 
       it "returns true" do
         expect(deployment).to be_notify_people

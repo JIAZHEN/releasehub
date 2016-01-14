@@ -6,8 +6,8 @@ class Branch
   field :active, type: Boolean
   belongs_to :repository
 
-  index({ name: 1 }, { unique: true })
-  index({ repository: 1 }, { unique: true })
+  index({ name: 1 })
+  index({ repository: 1 })
 
   validates :name, presence: true
 end
