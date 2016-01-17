@@ -13,22 +13,25 @@
 
 ActiveRecord::Schema.define(version: 20151227110430) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "branches", force: :cascade do |t|
-    t.integer  "repository_id", limit: 4
-    t.string   "name",          limit: 255
-    t.boolean  "active",        limit: 1,   default: true
-    t.datetime "created_at",                               null: false
-    t.datetime "updated_at",                               null: false
+    t.integer  "repository_id"
+    t.string   "name"
+    t.boolean  "active",        default: true
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
   end
 
   create_table "deployments", force: :cascade do |t|
-    t.integer  "release_id",        limit: 4
-    t.integer  "environment_id",    limit: 4
-    t.integer  "status_id",         limit: 4
-    t.string   "notification_list", limit: 255
-    t.string   "dev",               limit: 255
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.integer  "release_id"
+    t.integer  "environment_id"
+    t.integer  "status_id"
+    t.string   "notification_list"
+    t.string   "dev"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
   end
 
   add_index "deployments", ["created_at"], name: "index_deployments_on_created_at", using: :btree
@@ -40,41 +43,41 @@ ActiveRecord::Schema.define(version: 20151227110430) do
   add_index "deployments", ["status_id"], name: "index_deployments_on_status_id", using: :btree
 
   create_table "environments", force: :cascade do |t|
-    t.string   "name",       limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "operation_logs", force: :cascade do |t|
-    t.string   "username",      limit: 255
-    t.integer  "status_id",     limit: 4
-    t.integer  "deployment_id", limit: 4
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.string   "username"
+    t.integer  "status_id"
+    t.integer  "deployment_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
   add_index "operation_logs", ["status_id"], name: "index_operation_logs_on_status_id", using: :btree
   add_index "operation_logs", ["username"], name: "index_operation_logs_on_username", using: :btree
 
   create_table "projects", force: :cascade do |t|
-    t.integer  "deployment_id",          limit: 4
-    t.integer  "branch_id",              limit: 4
-    t.string   "sha",                    limit: 255
-    t.text     "deployment_instruction", limit: 65535
-    t.text     "rollback_instruction",   limit: 65535
-    t.datetime "created_at",                           null: false
-    t.datetime "updated_at",                           null: false
+    t.integer  "deployment_id"
+    t.integer  "branch_id"
+    t.string   "sha"
+    t.text     "deployment_instruction"
+    t.text     "rollback_instruction"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
   add_index "projects", ["branch_id"], name: "index_projects_on_branch_id", using: :btree
   add_index "projects", ["deployment_id"], name: "index_projects_on_deployment_id", using: :btree
 
   create_table "releases", force: :cascade do |t|
-    t.string   "name",       limit: 255
-    t.string   "summary",    limit: 255
-    t.integer  "status_id",  limit: 4
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string   "name"
+    t.string   "summary"
+    t.integer  "status_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_index "releases", ["created_at"], name: "index_releases_on_created_at", using: :btree
@@ -83,25 +86,25 @@ ActiveRecord::Schema.define(version: 20151227110430) do
   add_index "releases", ["summary"], name: "index_releases_on_summary", using: :btree
 
   create_table "repositories", force: :cascade do |t|
-    t.string   "name",       limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "statuses", force: :cascade do |t|
-    t.string   "name",       limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
-    t.string   "github_login",   limit: 255
-    t.string   "name",           limit: 255
-    t.string   "slack_username", limit: 255
-    t.string   "remember_token", limit: 255
-    t.string   "avatar_url",     limit: 255
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.string   "github_login"
+    t.string   "name"
+    t.string   "slack_username"
+    t.string   "remember_token"
+    t.string   "avatar_url"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
   end
 
   add_index "users", ["github_login"], name: "index_users_on_github_login", using: :btree

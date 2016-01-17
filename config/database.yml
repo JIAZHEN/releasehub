@@ -5,13 +5,11 @@
 #   gem 'sqlite3'
 #
 default: &default
-  adapter: mysql2
+  adapter: postgresql
   encoding: utf8
   database: releasehub
   pool: 5
-  username: root
   timeout: 5000
-  socket: /tmp/mysql.sock
 
 development:
   <<: *default
