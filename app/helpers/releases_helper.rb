@@ -20,37 +20,33 @@ module ReleasesHelper
     Status::CANCELLED => "#333333"
   }
 
-  def release_message(project_names, deployment)
-    url = "https://#{request.host_with_port}#{deployment_path(deployment)}"
+  def release_message(deployment)
+    deploy_url = "https://#{request.host_with_port}#{deployment_path(deployment)}"
+    release_url = "https://#{request.host_with_port}#{release_path(deployment.release)}"
+
     fields = [
       {
           title: "Projects",
-          value: project_names,
+          value: deployment.projects.map { |p| p.repository.name }.sort.join(", "),
           short: true
-      },
-      {
-          title: "Environment",
-          value: deployment.environment.name,
-          short: true
-      },
-      {
-          title: "Dev",
-          value: deployment.dev,
-          short: true
-      },
+      }
     ]
 
     if deployment.notify_people?
       fields.push({
         title: "Notification list",
-        value: deployment.notification_list,
+        value: deployment.notification_list.gsub(",", ", "),
         short: true
       })
     end
 
+    base_text = "<#{deploy_url}|##{deployment.id})> (<#{release_url}|#{deployment.release.name}>) #{deployment.status.name} to #{deployment.environment.name} by @#{current_username}"
+    base_text << " for @#{deployment.dev}" unless deployment.dev == current_username
+    notif_text = deployment.notify_people? ? " /cc #{deployment.notification_list.gsub(',', ', ')}" : ""
+
     [{
-      fallback: "<#{url}|RR(deployment-#{deployment.id})> is \"#{deployment.status.name}\" by @#{current_username} cc #{deployment.notification_list}",
-      text: "<#{url}|RR(deployment-#{deployment.id})> is \"#{deployment.status.name}\" by @#{current_username}",
+      fallback: "#{base_text}#{notif_text}",
+      text: base_text,
       fields: fields,
       color: STATUS_TO_SLACK_COLOUR[deployment.status_id]
     }].to_json
