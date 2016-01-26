@@ -20,40 +20,43 @@ module ReleasesHelper
     Status::CANCELLED => "#333333"
   }
 
-  def release_message(project_names, deployment)
-    url = "https://#{request.host_with_port}#{deployment_path(deployment)}"
-    fields = [
-      {
-          title: "Projects",
-          value: project_names,
-          short: true
-      },
-      {
-          title: "Environment",
-          value: deployment.environment.name,
-          short: true
-      },
-      {
-          title: "Dev",
-          value: deployment.dev,
-          short: true
-      },
-    ]
+  def release_message(deployment)
+    deploy_url = "https://#{request.host_with_port}#{deployment_path(deployment)}"
+    release_url = "https://#{request.host_with_port}#{release_path(deployment.release)}"
 
-    if deployment.notify_people?
-      fields.push({
-        title: "Notification list",
-        value: deployment.notification_list,
-        short: true
-      })
+    msg_text = "<#{deploy_url}|##{deployment.id}> (<#{release_url}|#{deployment.release.name}>) #{deployment.status.name} to #{deployment.environment.name} by @#{current_username}"
+    msg_text << " for @#{deployment.dev}" unless deployment.dev == current_username
+    fallback_text = "##{deployment.id} (#{deployment.release.name}) #{deployment.status.name} to #{deployment.environment.name} by @#{current_username}: #{deploy_url}"
+
+    payload = {
+      fallback: fallback_text,
+      text:     msg_text,
+      color:    STATUS_TO_SLACK_COLOUR[deployment.status_id]
+    }
+
+    if deployment.last_operator && deployment.last_operator.created_at < 5.minutes.ago
+      if deployment.notify_people?
+        payload[:text] << " /cc #{deployment.notification_list.gsub(',', ', ')}"
+      end
+    else
+      payload[:fields] = [
+        {
+            title: "Projects",
+            value: deployment.projects.map { |p| p.repository.name }.join(", "),
+            short: true
+        }
+      ]
+
+      if deployment.notify_people?
+        payload[:fields] << {
+          title: "Notify",
+          value: deployment.notification_list.gsub(",", ", "),
+          short: true
+        }
+      end
     end
 
-    [{
-      fallback: "<#{url}|RR(deployment-#{deployment.id})> is \"#{deployment.status.name}\" by @#{current_username} cc #{deployment.notification_list}",
-      text: "<#{url}|RR(deployment-#{deployment.id})> is \"#{deployment.status.name}\" by @#{current_username}",
-      fields: fields,
-      color: STATUS_TO_SLACK_COLOUR[deployment.status_id]
-    }].to_json
+    [payload].to_json
   end
 
   def status_colour(object, default = nil)
