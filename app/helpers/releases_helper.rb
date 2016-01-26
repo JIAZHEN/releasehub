@@ -29,8 +29,8 @@ module ReleasesHelper
     fallback_text = "##{deployment.id} (#{deployment.release.name}) #{deployment.status.name} to #{deployment.environment.name} by @#{current_username}: #{deploy_url}"
 
     payload = {
-      text:     msg_text,
       fallback: fallback_text,
+      text:     msg_text,
       color:    STATUS_TO_SLACK_COLOUR[deployment.status_id]
     }
 
@@ -42,7 +42,7 @@ module ReleasesHelper
       payload[:fields] = [
         {
             title: "Projects",
-            value: deployment.projects.map { |p| p.repository.name }.sort.join(", "),
+            value: deployment.projects.map { |p| p.repository.name }.join(", "),
             short: true
         }
       ]
