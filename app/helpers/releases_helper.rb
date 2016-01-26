@@ -24,32 +24,39 @@ module ReleasesHelper
     deploy_url = "https://#{request.host_with_port}#{deployment_path(deployment)}"
     release_url = "https://#{request.host_with_port}#{release_path(deployment.release)}"
 
-    fields = [
-      {
-          title: "Projects",
-          value: deployment.projects.map { |p| p.repository.name }.sort.join(", "),
-          short: true
-      }
-    ]
+    msg_text = "<#{deploy_url}|##{deployment.id}> (<#{release_url}|#{deployment.release.name}>) #{deployment.status.name} to #{deployment.environment.name} by @#{current_username}"
+    msg_text << " for @#{deployment.dev}" unless deployment.dev == current_username
+    fallback_text = "##{deployment.id} (#{deployment.release.name}) #{deployment.status.name} to #{deployment.environment.name} by @#{current_username}: #{deploy_url}"
 
-    if deployment.notify_people?
-      fields.push({
-        title: "Notification list",
-        value: deployment.notification_list.gsub(",", ", "),
-        short: true
-      })
+    payload = {
+      text:     msg_text,
+      fallback: fallback_text,
+      color:    STATUS_TO_SLACK_COLOUR[deployment.status_id]
+    }
+
+    if deployment.last_operator && deployment.last_operator.created_at < 5.minutes.ago
+      if deployment.notify_people?
+        payload[:text] << " /cc #{deployment.notification_list.gsub(',', ', ')}"
+      end
+    else
+      payload[:fields] = [
+        {
+            title: "Projects",
+            value: deployment.projects.map { |p| p.repository.name }.sort.join(", "),
+            short: true
+        }
+      ]
+
+      if deployment.notify_people?
+        payload[:fields] << {
+          title: "Notify",
+          value: deployment.notification_list.gsub(",", ", "),
+          short: true
+        }
+      end
     end
 
-    base_text = "<#{deploy_url}|##{deployment.id})> (<#{release_url}|#{deployment.release.name}>) #{deployment.status.name} to #{deployment.environment.name} by @#{current_username}"
-    base_text << " for @#{deployment.dev}" unless deployment.dev == current_username
-    notif_text = deployment.notify_people? ? " /cc #{deployment.notification_list.gsub(',', ', ')}" : ""
-
-    [{
-      fallback: "#{base_text}#{notif_text}",
-      text: base_text,
-      fields: fields,
-      color: STATUS_TO_SLACK_COLOUR[deployment.status_id]
-    }].to_json
+    [payload].to_json
   end
 
   def status_colour(object, default = nil)
