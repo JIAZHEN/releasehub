@@ -80,11 +80,13 @@
       var value = $(this).closest(".form-group").parent().find(".repository").val();
       var form_group = $(this).closest('.form-group');
       var branch_element = form_group.find('.branch');
+
       $.post("/get_branches",
         { repository : value, type : "sync" },
         function(response){
           if (response["error"] == undefined) {
             update_branch(branch_element, response);
+            select_master(branch_element);
             changeSha(branch_element);
           } else {
             form_group.toggleClass("has-error");

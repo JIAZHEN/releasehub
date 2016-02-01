@@ -53,6 +53,7 @@
         %br
 
         %label Deployment Instruction
+        %p= strip_tags( markdown.render(project.deployment_instruction).html_safe )
         %p= markdown.render(project.deployment_instruction).html_safe
 
         %label Rollback Instruction
