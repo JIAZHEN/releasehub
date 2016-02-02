@@ -19,6 +19,8 @@
         %a.sync.btn.btn-primary.btn-sm.ladda-button{"data-placement" => "bottom", "data-toggle" => "tooltip", :title => "Update when branch is not listed", "data-style" => "expand-left"}
           %span.ladda-label Sync Branch List
 
+    %input.branch-name{:name => "deployment[projects][branch_names][]", :type => "hidden", :value => ""}
+
     .form-group
       %label.col-sm-3.control-label{:for => "SHA"} SHA
       .col-sm-7
@@ -80,11 +82,13 @@
       var value = $(this).closest(".form-group").parent().find(".repository").val();
       var form_group = $(this).closest('.form-group');
       var branch_element = form_group.find('.branch');
+
       $.post("/get_branches",
         { repository : value, type : "sync" },
         function(response){
           if (response["error"] == undefined) {
             update_branch(branch_element, response);
+            select_master(branch_element);
             changeSha(branch_element);
           } else {
             form_group.toggleClass("has-error");
@@ -97,6 +101,7 @@
 
     // get branch sha
     $('.branch').change(function(e){
+      set_branch_name($(this));
       changeSha($(this));
     });
 

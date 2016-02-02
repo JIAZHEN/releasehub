@@ -16,7 +16,7 @@ ActiveRecord::Schema.define(version: 20151227110430) do
   create_table "branches", force: :cascade do |t|
     t.integer  "repository_id", limit: 4
     t.string   "name",          limit: 255
-    t.boolean  "active",        limit: 1,   default: true
+    t.boolean  "active",                    default: true
     t.datetime "created_at",                               null: false
     t.datetime "updated_at",                               null: false
   end

@@ -13,13 +13,15 @@
       type: "get"
     , ((response) ->
       update_branch branch_element, response
+      select_master branch_element
+      set_branch_name branch_element
       changeSha branch_element
     ), "json"
 
 @update_branch = (branch_element, data) ->
   rows = ""
   for index of data
-    rows += "<option value='" + data[index].id + "'> " + data[index].name + "</option>"
+    rows += "<option value='" + data[index].id + "'>" + data[index].name + "</option>"
   branch_element.html rows
 
 @changeSha = (branch_element) ->
@@ -63,3 +65,13 @@
   array = @query.split(",")
   query = array[array.length - 1]
   true unless item.name.toLowerCase().indexOf(query.trim().toLowerCase()) is -1
+
+@select_master = (branch_element) ->
+  env_name = $('select.environment option:selected').text()
+  if env_name is "production"
+    branch_element.find('option').filter(->
+      $(this).text() == 'master'
+    ).prop 'selected', true
+
+@set_branch_name = (element) ->
+  element.closest('.form-group').parent().find('input.branch-name').val element.find('option:selected').text()

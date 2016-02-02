@@ -85,6 +85,11 @@
     $('select.environment').change(function(e){
       var selected_text = $('select.environment option:selected').text();
       setDefaultNotify(selected_text, '#{DeploymentsHelper::DEFAULT_CHANNEL}', '#{DeploymentsHelper::DEFAULT_NOTIFY_IDS}');
+      if (selected_text == 'production') {
+        $('#app-area .projects-wrap .repository').each(function(index){
+          doneTyping($(this));
+        });
+      }
     });
 
     $('input.release.typeahead').typeahead({
@@ -112,6 +117,7 @@
     });
 
     $('.branch').each(function() {
+      set_branch_name($(this));
       changeSha($(this));
     });
 
