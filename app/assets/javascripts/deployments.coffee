@@ -14,6 +14,7 @@
     , ((response) ->
       update_branch branch_element, response
       select_master branch_element
+      set_branch_name branch_element
       changeSha branch_element
     ), "json"
 
@@ -72,3 +73,5 @@
       $(this).text() == 'master'
     ).prop 'selected', true
 
+@set_branch_name = (element) ->
+  element.closest('.form-group').parent().find('input.branch-name').val element.find('option:selected').text()
