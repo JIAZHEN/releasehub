@@ -19,6 +19,8 @@
         %a.sync.btn.btn-primary.btn-sm.ladda-button{"data-placement" => "bottom", "data-toggle" => "tooltip", :title => "Update when branch is not listed", "data-style" => "expand-left"}
           %span.ladda-label Sync Branch List
 
+    %input.branch-name{:name => "deployment[projects][branch_names][]", :type => "hidden", :value => ""}
+
     .form-group
       %label.col-sm-3.control-label{:for => "SHA"} SHA
       .col-sm-7
@@ -99,6 +101,7 @@
 
     // get branch sha
     $('.branch').change(function(e){
+      set_branch_name($(this));
       changeSha($(this));
     });
 

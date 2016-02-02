@@ -2,6 +2,12 @@ class DeploymentsController < ApplicationController
 
   before_action :setup, :only => [:new, :edit]
 
+  BRANCH_ID_IDX = 0
+  SHA_IDX = 1
+  D_IST_IDX = 2
+  R_IST_IDX = 3
+  BRANCH_NAME_IDX = 4
+
   SEARCH_KEYS = {
     "release" => "releases.summary",
     "env" => "environments.name",
@@ -11,33 +17,31 @@ class DeploymentsController < ApplicationController
   }
 
   def new
-    @release = Release.new
-    @deployment = Deployment.new
-    @releases = Release.order(:name => :asc).all
   end
 
   def create
-    @release = Release.find_or_create_by(:name => params["release_name"])
-    @release.update(:status_id => Status::OPEN, :summary => params["release_summary"])
-    @deployment = Deployment.create(deployment_params.merge(release_id: @release.id))
+    if all_master_if_production?
+      @release = Release.find_or_create_by(:name => params["release_name"])
+      @release.update(:status_id => Status::OPEN, :summary => params["release_summary"])
+      @deployment = Deployment.create(deployment_params.merge(release_id: @release.id))
 
-    project_params.map do |project|
-      @deployment.projects.find_or_create_by(
-        :branch_id => project[0],
-        :sha => project[1],
-        :deployment_instruction => project[2],
-        :rollback_instruction => project[3])
+      project_params.map do |project|
+        @deployment.projects.find_or_create_by(
+          :branch_id => project[BRANCH_ID_IDX],
+          :sha => project[SHA_IDX],
+          :deployment_instruction => project[D_IST_IDX],
+          :rollback_instruction => project[R_IST_IDX])
+      end
+
+      flash[:success] = "Thank you, the request has been submitted. It should be deployed shortly."
+      notify
+    else
+      flash[:danger] = "Branch must be master for production release."
     end
-
-    flash[:success] = "Thank you, the request has been submitted. It should be deployed shortly."
-    notify
     redirect_to new_deployment_path
   end
 
   def edit
-    @deployment = Deployment.find(params[:id])
-    @release = @deployment.release
-    @releases = Release.order(:name => :asc).all
     render :new
   end
 
@@ -112,6 +116,15 @@ class DeploymentsController < ApplicationController
       Repository.order(name: :asc).all
     end
     @environments = Rails.cache.fetch("envs", :expires_in => 1.day) { Environment.all }
+
+    if params[:id]
+      @deployment = Deployment.find(params[:id])
+      @release = @deployment.release
+    else
+      @deployment = Deployment.new
+      @release = Release.new
+    end
+    @releases = Release.order(:name => :asc).all
   end
 
   def respond_with_json(data, status = 200)
@@ -130,11 +143,18 @@ class DeploymentsController < ApplicationController
   end
 
   def project_params
+    return @project_params if @project_params
     projects = params["deployment"]["projects"]
-    projects["branches"].zip(
-      projects["shas"],
-      projects["deployment_instructions"],
-      projects["rollback_instructions"])
+    @project_params = projects["branches"].zip(
+                        projects["shas"],
+                        projects["deployment_instructions"],
+                        projects["rollback_instructions"],
+                        projects["branch_names"])
+  end
+
+  def all_master_if_production?
+    environment = Environment.find(params["deployment"]["environment_id"])
+    !environment.production? || project_params.all? { |project| project[BRANCH_NAME_IDX] == "master".freeze }
   end
 
   def notify
