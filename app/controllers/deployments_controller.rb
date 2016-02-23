@@ -47,11 +47,9 @@ class DeploymentsController < ApplicationController
 
   def index
     search_query = search_params
-    @deployments = if !search_query.empty?
-      Deployment.joins(:status).joins(:release).joins(:environment).where(search_query)
-    else
-      Deployment
-    end.order(:id => :desc).page(params[:page]).per(params[:per_page] || 30)
+    @deployments = Deployment.includes(:operation_logs, :status, :release, :environment, projects: [branch: [:repository]]).
+      where(search_query).references(:operation_logs, :status, :release, :environment, projects: [branch: [:repository]]).
+      order(:id => :desc).page(params[:page]).per(params[:per_page] || 30)
 
     @deployment_status = Status.deployment_status if ops?
   end
