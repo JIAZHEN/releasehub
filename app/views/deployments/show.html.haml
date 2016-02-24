@@ -39,7 +39,7 @@
             %option{:value => status.id, :selected => @deployment.status == status ? "selected" : nil}= status.name
 
   .row
-    - @deployment.projects.order(id: :asc).each do |project|
+    - @deployment.projects.each do |project|
       .col-lg-4
         %h4
           %a{:href => "https://github.com/#{ReleasesHelper::ORGANISATION}/#{project.repository.name}"}

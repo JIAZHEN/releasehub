@@ -8,12 +8,12 @@ class ReleasesController < ApplicationController
   }
 
   def index
-    @releases = Release.order(:id => :desc).page(params[:page]).per(params[:per_page] || 30)
+    @releases = Release.includes(:status, deployments: [:environment, :status, projects: [branch: [:repository]]]).order(:id => :desc).page(params[:page]).per(params[:per_page] || 30)
     @releases_status = Status.release_status if ops?
   end
 
   def show
-    @release = Release.find(params[:id])
+    @release = Release.includes(:status, deployments: [:environment, :status, projects: [branch: [:repository]]]).find(params[:id])
     @deployment_status = Status.deployment_status if ops?
   end
 

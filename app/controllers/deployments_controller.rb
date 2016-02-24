@@ -56,11 +56,11 @@ class DeploymentsController < ApplicationController
 
   def show
     @deployment_status = Status.deployment_status if ops?
-    @deployment = Deployment.find(params[:id])
+    @deployment = Deployment.includes(:operation_logs, :status, :release, :environment, projects: [branch: [:repository]]).find(params[:id])
   end
 
   def update_status
-    @deployment = Deployment.find(params["deployment_id"])
+    @deployment = Deployment.includes(:status).find(params["deployment_id"])
     last_operator = @deployment.last_operator.try(:username)
 
     if last_operator && current_username != last_operator && @deployment.status_id != Status::WAIT_TO_DEPLOY
