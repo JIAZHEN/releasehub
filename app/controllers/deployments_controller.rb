@@ -158,9 +158,7 @@ class DeploymentsController < ApplicationController
   end
 
   def notify
-    project_names = @deployment.projects.map { |project| project.repository.name }.join(", ")
-    message = release_message(project_names, @deployment)
-    slack_post(channels, message)
+    slack_post(channels, release_message(@deployment))
   end
 
   def channels
