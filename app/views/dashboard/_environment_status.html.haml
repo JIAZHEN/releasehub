@@ -15,7 +15,7 @@
               %dd= deployment.notification_list
               %dt Repositories
               %dd
-                - deployment.projects.order(:id => :asc).each do |project|
+                - deployment.projects.each do |project|
                   %a.btn.btn-default.btn-xs{:href => sha_url(project.repository.name, project.sha)}
                     %i.fa.fa-tag
                     = project.repository.name
