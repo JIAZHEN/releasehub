@@ -4,9 +4,8 @@ class DashboardController < ApplicationController
   def index
     if authenticated?
       @today = Date.today.strftime("%Y-%m-%d")
-      @lastest_deployments = Deployment.where(
-        "status_id IN (?)", [Status::WAIT_TO_DEPLOY, Status::DEPLOYING]).
-        order(:id => :asc).all
+      @lastest_deployments = Deployment.includes(:operation_logs, :status, :release, :environment, projects: [branch: [:repository]]).
+        where("status_id IN (?)", [Status::WAIT_TO_DEPLOY, Status::DEPLOYING]).all
       @boxes_info = stagingnow
       @deployment_status = Status.deployment_status if ops?
     end
@@ -52,7 +51,7 @@ class DashboardController < ApplicationController
   private
 
   def stagingnow
-    deploys = Deployment.joins("LEFT OUTER JOIN
+    deploys = Deployment.includes(:release, projects: [branch: [:repository]]).joins("LEFT OUTER JOIN
       deployments d2 ON (deployments.environment_id = d2.environment_id AND deployments.created_at < d2.created_at)")
       .where("d2.created_at IS NULL").all
 

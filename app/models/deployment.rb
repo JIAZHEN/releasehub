@@ -13,7 +13,7 @@ class Deployment < ActiveRecord::Base
   NOTIFY_STATUS = Set[Status::DEPLOYED, Status::ROLLBACK]
 
   def repo_names
-    projects.order(:id).map { |project| project.repository.name }.join(",")
+    projects.map { |project| project.repository.name }.join(",")
   end
 
   def notify_people?

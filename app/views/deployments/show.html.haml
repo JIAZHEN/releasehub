@@ -39,17 +39,19 @@
             %option{:value => status.id, :selected => @deployment.status == status ? "selected" : nil}= status.name
 
   .row
-    - @deployment.projects.order(id: :asc).each do |project|
+    - @deployment.projects.each do |project|
       .col-lg-4
         %h4
-          %mark= project.repository.name.capitalize
+          %a{:href => "https://github.com/#{ReleasesHelper::ORGANISATION}/#{project.repository.name}"}
+            %mark= project.repository.name
 
         %label Branch
         %code= project.branch.name
         %br
 
         %label SHA
-        %code= project.sha
+        %a{:href => sha_url(project.repository.name, project.sha)}
+          %code= project.sha
         %br
 
         %label Deployment Instruction

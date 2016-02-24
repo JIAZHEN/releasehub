@@ -24,7 +24,7 @@
                   .btn{"data-target" => "#deploymentProject#{deployment.id}", "data-toggle" => "modal", :type => "button", :class => "btn-#{status_colour(deployment)} ", :id => "btn-status-name-#{deployment.id}"}
                     = deployment.status.name
                     = " by #{deployment.last_operator.username}" if deployment.last_operator
-                  = render "shared/projects_model", deployment: deployment, projects: deployment.projects.order(id: :asc)
+                  = render "shared/projects_model", deployment: deployment, projects: deployment.projects
 
   .row
     .col-lg-12

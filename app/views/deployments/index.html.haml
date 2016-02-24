@@ -67,12 +67,12 @@
             %td= link_to deployment.release.name, release_path(deployment.release)
             %td
               %a{"data-target" => "#deploymentProject#{deployment.id}", "data-toggle" => "modal", :type => "button"}
-                - deployment.projects.order(:id => :asc).each do |project|
+                - deployment.projects.each do |project|
                   .btn.btn-default.btn-xs
                     %i.fa.fa-tag
                     = project.repository.name
 
-              = render "shared/projects_model", deployment: deployment, projects: deployment.projects.order(id: :asc)
+              = render "shared/projects_model", deployment: deployment, projects: deployment.projects
             %td= deployment.environment.name
             %td= deployment.dev
             %td= deployment.operation_logs.map(&:username).uniq.join(",") unless deployment.operation_logs.empty?

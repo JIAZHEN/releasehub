@@ -40,7 +40,8 @@ RSpec.describe DeploymentsController, type: :controller do
         "branches" => branches.map { |branch| branch.id },
         "shas" => branches.map { SecureRandom.hex },
         "deployment_instructions" => branches.map { "fake deploy" },
-        "rollback_instructions" => branches.map { "fake rollback" }
+        "rollback_instructions" => branches.map { "fake rollback" },
+        "branch_names" => branches.map { |branch| branch.name }
       }
     end
     let(:params) do
