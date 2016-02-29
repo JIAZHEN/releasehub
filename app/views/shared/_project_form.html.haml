@@ -30,13 +30,13 @@
     .form-group
       %label.col-sm-3.control-label{:for => "Deployment Instructions"} Deployment Instructions
       .col-sm-7
-        %textarea.form-control{:rows => "5", :name => "deployment[projects][deployment_instructions][]", :required => ""}= project.try(:deployment_instruction) || "- Deploy\n- Restart"
+        %textarea.form-control{:rows => "5", :name => "deployment[projects][deployment_instructions][]", :required => "", :placeholder => "Please specify carefully"}
         .help-block.with-errors
 
     .form-group
       %label.col-sm-3.control-label{:for => "Rollback Instructions"} Rollback Instructions
       .col-sm-7
-        %textarea.form-control{:rows => "5", :name => "deployment[projects][rollback_instructions][]", :required => ""}= project.try(:rollback_instruction) || "N/A"
+        %textarea.form-control{:rows => "5", :name => "deployment[projects][rollback_instructions][]", :required => "", :placeholder => "Please specify carefully"}
         .help-block.with-errors
       .col-sm-1
         %a.trash{:href => "#"}
