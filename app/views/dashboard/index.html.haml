@@ -15,7 +15,7 @@
         .panel-body
           .row
             - @lastest_deployments.each do |deployment|
-              .col-md-6.col-sm-6
+              .col-md-6.col-sm-12.col-xs-12
                 .latest-deployment.btn-group
                   .btn.btn-default{"data-target" => "#deploymentProject#{deployment.id}", "data-toggle" => "modal", :type => "button"}
                     = deployment.id

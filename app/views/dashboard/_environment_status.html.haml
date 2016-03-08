@@ -2,25 +2,20 @@
   .panel{:class => "panel-#{env_to_colour(env.name)}"}
     .panel-heading
       .row
-        .env-icon.col-xs-2
-          %span.fa-stack.fa-3x.fa-fw
+        .env-icon.col-xs-12.col-sm-2.col-md-2
+          %span.fa-stack.fa-2x.fa-fw
             %i.fa.fa-television.fa-stack-2x
             .fa-stack-1x.television-text= env_name(env)
-        .env-details.col-xs-10
+        .env-details.col-xs-12.col-sm-10.col-sm-10
           - if deployment
-            %dl.dl-horizontal
-              %dt Dev
-              %dd= deployment.dev
-              %dt Notification list
-              %dd= deployment.notification_list
-              %dt Repositories
-              %dd
+            %ul
+              %li= "Submitter - #{deployment.dev}"
+              %li
                 - deployment.projects.each do |project|
                   %a.btn.btn-default.btn-xs{:href => sha_url(project.repository.name, project.sha)}
                     %i.fa.fa-tag
                     = project.repository.name
-              %dt Submitted at
-              %dd= deployment.created_at.to_s(:db)
+              %li= "Submitted #{time_ago_in_words(deployment.created_at)} ago"
 
     %a{:href => releases_path}
       .panel-footer
