@@ -23,3 +23,4 @@
 //= require datatables.min
 //= require deployments
 //= require datepicker
+//= require pusher.min

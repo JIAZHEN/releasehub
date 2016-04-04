@@ -18,6 +18,7 @@ gem "redcarpet"
 gem "dotenv-rails"
 gem "therubyracer"
 gem "pg"
+gem "pusher"
 
 group :development, :test do
   gem "byebug"
