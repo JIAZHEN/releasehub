@@ -167,7 +167,8 @@ class DeploymentsController < ApplicationController
 
   def pusher_new_deployment
     Pusher.trigger("releasehub_channel", "new_deployment", {
-      message: "##{@deployment.id} (#{@deployment.release.name}) submitted to #{@deployment.environment.name}"
+      message: "##{@deployment.id} (#{@deployment.release.name}) submitted to #{@deployment.environment.name}",
+      unread_count: Deployment.where(:status_id => Status::WAIT_TO_DEPLOY).count
     })
   end
 end
