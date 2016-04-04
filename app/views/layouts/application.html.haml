@@ -17,11 +17,12 @@
       toastr.options = {
         "closeButton": true,
         "newestOnTop": true
-      }
+      };
 
       var channel = pusher.subscribe('releasehub_channel');
       channel.bind('new_deployment', function(data) {
-        toastr.info(data.message, "ReleaseHub")
+        toastr.info(data.message, "ReleaseHub");
+        document.title = "(" + data.unread_count + ") ReleaseHub";
       });
 
   %body
