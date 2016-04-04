@@ -7,6 +7,18 @@
     = javascript_include_tag "application", "data-turbolinks-track" => true
     = favicon_link_tag "favicon.ico"
     = csrf_meta_tags
+
+    :javascript
+      var pusher = new Pusher('#{Pusher.key}', {
+        cluster: '#{ENV["PUSHER_CLUSTER"]}',
+        encrypted: true
+      });
+
+      var channel = pusher.subscribe('releasehub_channel');
+      channel.bind('new_deployment', function(data) {
+        toastr.success(data.message)
+      });
+
   %body
     #wrapper
       = render "shared/navigation"
