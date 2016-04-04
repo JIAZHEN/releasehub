@@ -34,6 +34,7 @@ class DeploymentsController < ApplicationController
       end
 
       flash[:success] = "Thank you, the request has been submitted. It should be deployed shortly."
+      pusher_new_deployment
       notify
     else
       flash[:danger] = "Branch must be master for production release."
@@ -164,5 +165,11 @@ class DeploymentsController < ApplicationController
   def channels
     list = @deployment.notification_list.split(",")
     list.uniq.reject{ |channel| channel.start_with?("@") }
+  end
+
+  def pusher_new_deployment
+    Pusher.trigger("releasehub_channel", "new_deployment", {
+      message: "##{@deployment.id} (#{@deployment.release.name}) submitted to #{@deployment.environment.name}"
+    })
   end
 end

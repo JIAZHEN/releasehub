@@ -47,17 +47,26 @@ of course change to other database.
 
 ### Create `config/development.env` file with the following variables
 
-    GITHUB_CLIENT_ID= # github application client ID
-    GITHUB_CLIENT_SECRET= # github application client secret
-    GITHUB_ACCESS_TOKEN= # github account access token
-    ORGANISATION= # the name of your github organisation
-    SLACK_TOKEN= # the slack team token
-    # the slack ID of the admin members, they can change deployment status
-    ADMIN_MEMBERS=
-    # the slack ID of members that need to be notified when deploy to production
-    DEFAULT_NOTIFY_IDS=
-    # the slack ID of channel that need to be notified as default
-    DEFAULT_CHANNEL=
+        # github credentials
+        export GITHUB_CLIENT_ID=
+        export GITHUB_CLIENT_SECRET=
+        export GITHUB_ACCESS_TOKEN=
+        export ORGANISATION=
+
+        # slack credentials
+        export SLACK_TOKEN=
+
+        # RH configurations
+        export ADMIN_MEMBERS=
+        export DEFAULT_NOTIFY_IDS=
+        export DEFAULT_CHANNEL=
+
+        # Pusher credentials
+        export PUSHER_APP_ID =
+        export PUSHER_KEY =
+        export PUSHER_SECRET =
+        export PUSHER_CLUSTER =
+
 
 ### Bootstrap the configuration
 
