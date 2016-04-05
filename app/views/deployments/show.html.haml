@@ -25,7 +25,7 @@
           %tr
             %td= log.username
             %td= log.status.name
-            %td= log.created_at.to_s(:db)
+            %td= log.created_at.strftime("%Y-%m-%d %H:%M:%S")
 
     .summary.col-lg-4
       %h4 Notification list

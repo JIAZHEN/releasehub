@@ -29,7 +29,7 @@
             %td= release.summary
             %td= link_to release.deployments.size, release_path(release)
             %td{:id => "release-#{release.id}-status"}= release.status.name
-            %td= release.created_at.to_s(:db)
+            %td= release.created_at.strftime("%Y-%m-%d %H:%M:%S")
             - if ops?
               %td
                 %select{:name => "status"}

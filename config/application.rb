@@ -33,6 +33,6 @@ module DevelopmentTracker
     config.active_record.raise_in_transactional_callbacks = true
 
     config.time_zone = "London"
-    config.active_record.default_timezone = :utc
+    config.active_record.default_timezone = :local
   end
 end
