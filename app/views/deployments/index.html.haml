@@ -78,7 +78,7 @@
             %td= deployment.operation_logs.map(&:username).uniq.join(",") unless deployment.operation_logs.empty?
             %td{:id => "deployment-#{deployment.id}-status"}= deployment.status.name
             %td= deployment.notification_list
-            %td= deployment.created_at.to_s(:db)
+            %td= deployment.created_at.strftime("%Y-%m-%d %H:%M:%S")
             %td
               - if !current_username.blank?
                 %a.btn.btn-primary.btn-sm{:href => edit_deployment_path(deployment) }
