@@ -71,7 +71,7 @@
                             %label Rollback Instruction
                             %p= project.rollback_instruction
                             %hr
-              %td= deployment.created_at.to_s(:db)
+              %td= deployment.created_at.strftime("%Y-%m-%d %H:%M:%S")
               - if ops?
                 %td
                   %select{:name => "status"}

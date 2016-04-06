@@ -5,8 +5,26 @@
     %title ReleaseHub
     = stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true
     = javascript_include_tag "application", "data-turbolinks-track" => true
-    = favicon_link_tag "favicon.ico"
+    = favicon_link_tag "favicon.png"
     = csrf_meta_tags
+
+    :javascript
+      var pusher = new Pusher('#{Pusher.key}', {
+        cluster: '#{ENV["PUSHER_CLUSTER"]}',
+        encrypted: true
+      });
+
+      toastr.options = {
+        "closeButton": true,
+        "newestOnTop": true
+      };
+
+      var channel = pusher.subscribe('releasehub_channel');
+      channel.bind('new_deployment', function(data) {
+        toastr.info(data.message, "ReleaseHub");
+        document.title = "(" + data.unread_count + ") ReleaseHub";
+      });
+
   %body
     #wrapper
       = render "shared/navigation"
