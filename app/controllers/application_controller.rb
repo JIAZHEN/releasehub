@@ -11,6 +11,7 @@ class ApplicationController < ActionController::Base
   include SlackHelper
 
   before_action :require_authentication
+  before_action :new_deployment_count
 
   private
 
@@ -19,5 +20,9 @@ class ApplicationController < ActionController::Base
       flash[:danger] = "Please login"
       redirect_to root_path
     end
+  end
+
+  def new_deployment_count
+    @unread_count ||= Deployment.where(:status_id => Status::WAIT_TO_DEPLOY).count
   end
 end
