@@ -1,6 +1,7 @@
 source "https://rubygems.org"
 
 gem "rails"
+gem "bootstrap-sass", "~> 3.3.6"
 gem "sass-rails"
 gem "uglifier"
 gem "coffee-rails"
