@@ -14,14 +14,29 @@
         encrypted: true
       });
 
-      toastr.options = {
-        "closeButton": true,
-        "newestOnTop": true
-      };
+      var presenceChannel = pusher.subscribe("releasehub_channel");
 
-      var channel = pusher.subscribe('releasehub_channel');
-      channel.bind('new_deployment', function(data) {
-        toastr.info(data.message, "ReleaseHub");
+      presenceChannel.bind("new_deployment", function(data) {
+        var notice = new PNotify({
+          title: "ReleaseHub",
+          text: data.message,
+          type: 'info',
+          icon: null,
+          desktop: {
+            desktop: true,
+            icon: "#{asset_path('logo-32x32.png')}",
+            tag: "ReleaseHub:" + data.url
+          }
+        });
+
+        if (data.url) {
+          return notice.get().click(function() {
+            if (notice.state === 'open') {
+              return window.open(data.url);
+            }
+          });
+        }
+
         document.title = "(" + data.unread_count + ") ReleaseHub";
       });
 
