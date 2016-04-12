@@ -15,7 +15,7 @@
 //= require nprogress
 //= require nprogress-turbolinks
 //= require turbolinks
-//= require bootstrap.min
+//= require bootstrap-sprockets
 //= require spin.min
 //= require ladda.min
 //= require bootstrap3-typeahead.min
