@@ -75,3 +75,7 @@
 
 @set_branch_name = (element) ->
   element.closest('.form-group').parent().find('input.branch-name').val element.find('option:selected').text()
+
+#dekstop notification
+PNotify::options.styling = 'bootstrap3'
+PNotify.desktop.permission()
