@@ -8,37 +8,38 @@
     = favicon_link_tag "favicon.png"
     = csrf_meta_tags
 
-    :javascript
-      var pusher = new Pusher('#{Pusher.key}', {
-        cluster: '#{ENV["PUSHER_CLUSTER"]}',
-        encrypted: true
-      });
-
-      var presenceChannel = pusher.subscribe("releasehub_channel");
-
-      presenceChannel.bind("new_deployment", function(data) {
-        var notice = new PNotify({
-          title: "ReleaseHub",
-          text: data.message,
-          type: 'info',
-          icon: null,
-          desktop: {
-            desktop: true,
-            icon: "#{asset_path('logo-32x32.png')}",
-            tag: "ReleaseHub:" + data.url
-          }
+    - if authenticated?
+      :javascript
+        var pusher = new Pusher('#{Pusher.key}', {
+          cluster: '#{ENV["PUSHER_CLUSTER"]}',
+          encrypted: true
         });
 
-        if (data.url) {
-          return notice.get().click(function() {
-            if (notice.state === 'open') {
-              return window.open(data.url);
+        var presenceChannel = pusher.subscribe("releasehub_channel");
+
+        presenceChannel.bind("new_deployment", function(data) {
+          var notice = new PNotify({
+            title: "ReleaseHub",
+            text: data.message,
+            type: 'info',
+            icon: null,
+            desktop: {
+              desktop: true,
+              icon: "#{asset_path('logo-32x32.png')}",
+              tag: "ReleaseHub:" + data.url
             }
           });
-        }
 
-        document.title = "(" + data.unread_count + ") ReleaseHub";
-      });
+          if (data.url) {
+            return notice.get().click(function() {
+              if (notice.state === 'open') {
+                return window.open(data.url);
+              }
+            });
+          }
+
+          document.title = "(" + data.unread_count + ") ReleaseHub";
+        });
 
   %body
     #wrapper
