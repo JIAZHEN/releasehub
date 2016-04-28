@@ -30,17 +30,25 @@
     .form-group
       %label.col-sm-3.control-label{:for => "Deployment Instructions"} Deployment Instructions
       .col-sm-7
-        %textarea.form-control{:rows => "5", :name => "deployment[projects][deployment_instructions][]", :required => "", :placeholder => "Please specify carefully"}
+        %textarea.form-control{:rows => "5", :name => "deployment[projects][deployment_instructions][]", :required => "", :placeholder => "Please specify carefully"}= project ? project.deployment_instruction : nil
         .help-block.with-errors
 
     .form-group
       %label.col-sm-3.control-label{:for => "Rollback Instructions"} Rollback Instructions
       .col-sm-7
-        %textarea.form-control{:rows => "5", :name => "deployment[projects][rollback_instructions][]", :required => "", :placeholder => "Please specify carefully"}
+        %textarea.form-control{:rows => "5", :name => "deployment[projects][rollback_instructions][]", :required => "", :placeholder => "Please specify carefully"}= project ? project.rollback_instruction : nil
         .help-block.with-errors
       .col-sm-1
         %a.trash{:href => "#"}
-          %i.fa.fa-trash.fa-fw
+          %i.fa.fa-trash.fa-lg
+
+    .form-group
+      %label.col-sm-3.control-label{:for => "Confirmation"} Review and confirm instructions
+      .col-sm-7
+        .checkbox
+          %label
+            %input{:type => "checkbox", :required => ""}/
+        .help-block.with-errors
 
 :javascript
   $(document).ready(function(){
