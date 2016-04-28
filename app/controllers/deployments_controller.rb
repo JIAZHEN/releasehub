@@ -117,7 +117,7 @@ class DeploymentsController < ApplicationController
     @environments = Rails.cache.fetch("envs", :expires_in => 1.day) { Environment.all }
 
     if params[:id]
-      @deployment = Deployment.find(params[:id])
+      @deployment = Deployment.includes(:release, :environment, projects: [branch: [:repository]]).find(params[:id])
       @release = @deployment.release
     else
       @deployment = Deployment.new
