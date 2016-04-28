@@ -58,7 +58,7 @@
   .github-info-container.form-header-underline
     #app-area.row
       - if !@deployment.projects.empty?
-        - @deployment.projects.order(:id => :asc).each do |project|
+        - @deployment.projects.each do |project|
           = render "shared/project_form", project: project
       - else
         = render "shared/project_form", project: nil
