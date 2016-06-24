@@ -37,8 +37,8 @@
         %select{:name => "status"}
           - @deployment_status.each do |status|
             %option{:value => status.id, :selected => @deployment.status == status ? "selected" : nil}= status.name
-
-    - if ops?
+        %button.next-status.btn.btn-success.btn-sm.ladda-button{"data-placement" => "bottom", "data-toggle" => "tooltip", :title => "Update when branch is not listed", "data-style" => "expand-left", "data-next-status" => @deployment.status.next, :disabled => ("disabled" if @deployment.status.next.nil?)}
+          %span.ladda-label Next status
       .summary.col-lg-4
         %h4 Operations commands
         - @deployment.projects.each do |project|
@@ -75,9 +75,52 @@
   $(document).ready(function(){
     $("select[name='status']").change(function() {
       var status_id = $(this).val();
+      var btn = $('.next-status');
+      var disable;
       $.post("/deployment_update_status",
         { status_id : status_id, deployment_id : #{@deployment.id}},
         function(response){
+          if (response["error"] === undefined) {
+            disable = response["disable"];
+
+            if (disable === false) {
+              btn.data('next-status', response["next_status"]);
+            } else {
+              btn.removeData('next-status');
+            }
+
+            btn.prop("disabled", disable);
+          } else {
+            alert(response["error"]);
+          }
         }, "json");
+    });
+
+    $('.next-status').click(function(e){
+      e.preventDefault();
+      var l = Ladda.create(this);
+      l.start();
+      var status_id = $(this).data('next-status');
+      var btn = $(this);
+      var disable;
+
+      $.post("/deployment_update_status",
+        { status_id : status_id, deployment_id : #{@deployment.id}},
+        function(response){
+          if (response["error"] === undefined) {
+            $("select[name='status']").val(status_id);
+            disable = response["disable"];
+
+            if (disable === false) {
+              btn.data('next-status', response["next_status"]);
+            } else {
+              btn.removeData('next-status');
+            }
+          } else {
+            alert(response["error"]);
+          }
+        }, "json")
+      .always(function() { l.stop(); btn.prop("disabled", disable); });
+      return false;
     });
   });

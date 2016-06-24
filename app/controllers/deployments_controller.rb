@@ -71,7 +71,11 @@ class DeploymentsController < ApplicationController
       # record the operations
       OperationLog.create!(username: current_username, status_id: params["status_id"],
         deployment_id: params["deployment_id"])
-      result = { name: @deployment.status.name, colour: status_colour(@deployment), ops: current_username }
+      result = {
+        name: @deployment.status.name, colour: status_colour(@deployment),
+        ops: current_username, next_status: @deployment.status.next,
+        disable: @deployment.status.next.nil?
+      }
       notify
     end
 
