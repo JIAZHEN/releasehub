@@ -21,7 +21,7 @@
           - if ops?
             %h4 Operations commands
             - projects.each do |project|
-              %p.project-command
+              %pre.project-command
                 - if deployment.environment.production?
                   = "#{deployment.environment.name} #{project.repository.name} #{project.sha}"
                 - else
