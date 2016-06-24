@@ -24,7 +24,7 @@ module ReleasesHelper
     deploy_url = "https://#{request.host_with_port}#{deployment_path(deployment)}"
     release_url = "https://#{request.host_with_port}#{release_path(deployment.release)}"
 
-    msg_text = "<#{deploy_url}|##{deployment.id}> (<#{release_url}|#{deployment.release.name}>) #{deployment.status.name} to #{deployment.environment.name} by @#{current_username}"
+    msg_text = "<#{deploy_url}|##{deployment.id}> (<#{release_url}|#{deployment.release.name}>) #{deployment.status.name} to #{deployment.environment.name} by #{current_username}"
     msg_text << " for @#{deployment.dev}" unless deployment.dev == current_username
     fallback_text = "##{deployment.id} (#{deployment.release.name}) #{deployment.status.name} to #{deployment.environment.name} by @#{current_username}: #{deploy_url}"
 
