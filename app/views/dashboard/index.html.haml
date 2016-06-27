@@ -43,12 +43,23 @@
         var status_id = $(this).val();
         var btn_target = $('#btn-status-' + deployment_id);
         var btn_name_target = $('#btn-status-name-' + deployment_id);
+        var disable;
+        var next_step_btn = $(".next-status[data-deployment='" + deployment_id + "']");
+
         $.post("/deployment_update_status",
           { status_id : status_id, deployment_id : deployment_id},
           function(response){
             if (!!response.error) {
               alert(response.error);
             } else {
+              disable = response["disable"];
+              if (disable === false) {
+                next_step_btn.data('next-status', response["next_status"]);
+              } else {
+                next_step_btn.removeData('next-status');
+              }
+              next_step_btn.prop("disabled", disable);
+
               btn_target.removeClass();
               btn_name_target.removeClass();
               btn_target.addClass('btn btn-' + response.colour);
@@ -56,6 +67,43 @@
               btn_name_target.text(response.name + ' by ' + response.ops);
             }
           }, "json");
+      });
+
+      $('.next-status').click(function(e){
+        e.preventDefault();
+        var l = Ladda.create(this);
+        l.start();
+        var deployment_id = $(this).data("deployment");
+        var btn_target = $('#btn-status-' + deployment_id);
+        var btn_name_target = $('#btn-status-name-' + deployment_id);
+
+        var status_id = $(this).data('next-status');
+        var btn = $(this);
+        var disable;
+
+        $.post("/deployment_update_status",
+          { status_id : status_id, deployment_id : deployment_id },
+          function(response){
+            if (response["error"] === undefined) {
+              $('#model-deployment-status' + deployment_id).val(status_id);
+              btn_target.removeClass();
+              btn_name_target.removeClass();
+              btn_target.addClass('btn btn-' + response.colour);
+              btn_name_target.addClass('btn btn-' + response.colour);
+              btn_name_target.text(response.name + ' by ' + response.ops);
+              disable = response["disable"];
+
+              if (disable === false) {
+                btn.data('next-status', response["next_status"]);
+              } else {
+                btn.removeData('next-status');
+              }
+            } else {
+              alert(response["error"]);
+            }
+          }, "json")
+        .always(function() { l.stop(); btn.prop("disabled", disable); });
+        return false;
       });
     });
 

@@ -33,6 +33,8 @@
               %select{:name => "status", :id => "model-deployment-status#{deployment.id}", "data-deployment" => deployment.id}
                 - @deployment_status.each do |status|
                   %option{:value => status.id, :selected => deployment.status == status ? "selected" : nil}= status.name
+              %button.next-status.btn.btn-success.btn-sm.ladda-button{"data-placement" => "bottom", "data-toggle" => "tooltip", :title => "Update when branch is not listed", "data-style" => "expand-left", "data-next-status" => deployment.status.next, "data-deployment" => deployment.id,  :disabled => ("disabled" if deployment.status.next.nil?)}
+                %span.ladda-label Next status
 
 
           - projects.each do |project|
