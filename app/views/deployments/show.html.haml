@@ -42,7 +42,7 @@
       .summary.col-lg-4
         %h4 Operations commands
         - @deployment.projects.each do |project|
-          %pre.project-command
+          %p.project-command
             - if @deployment.environment.production?
               = "#{@deployment.environment.name} #{project.repository.name} #{project.sha}"
             - else
