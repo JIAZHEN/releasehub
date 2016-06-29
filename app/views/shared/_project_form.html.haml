@@ -90,6 +90,7 @@
       var value = $(this).closest(".form-group").parent().find(".repository").val();
       var form_group = $(this).closest('.form-group');
       var branch_element = form_group.find('.branch');
+      var selected_branch = branch_element.val();
 
       $.post("/get_branches",
         { repository : value, type : "sync" },
@@ -98,6 +99,7 @@
             update_branch(branch_element, response);
             select_master(branch_element);
             changeSha(branch_element);
+            branch_element.val(selected_branch);
           } else {
             form_group.toggleClass("has-error");
             form_group.find('.help-block.with-errors').text(response["error"]);
