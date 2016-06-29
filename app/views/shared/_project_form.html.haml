@@ -98,8 +98,8 @@
           if (response["error"] == undefined) {
             update_branch(branch_element, response);
             select_master(branch_element);
-            changeSha(branch_element);
             branch_element.val(selected_branch);
+            changeSha(branch_element);
           } else {
             form_group.toggleClass("has-error");
             form_group.find('.help-block.with-errors').text(response["error"]);
