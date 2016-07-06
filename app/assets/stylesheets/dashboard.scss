@@ -424,6 +424,9 @@ table.dataTable thead .sorting:after {
 
 .fixed-width {
     max-width: 50%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .btn-cancel {
