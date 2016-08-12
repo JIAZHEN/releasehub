@@ -2,7 +2,7 @@ module SlackHelper
   ActionView::Helpers::AssetUrlHelper
 
   SLACK_TOKEN = ENV["SLACK_TOKEN"]
-  LOGO_URL = "https://dl.dropboxusercontent.com/u/44435189/animal.png"
+  LOGO_URL = "https://dl.dropboxusercontent.com/u/44435189/releasehub-logo-48.png"
   SLACK_CHAT_URL = "https://slack.com/api/chat.postMessage"
   SLACK_USER_LIST_URL = "https://slack.com/api/users.list"
   SLACK_CHANNEL_LIST_URL = "https://slack.com/api/channels.list"
@@ -16,6 +16,7 @@ module SlackHelper
         "attachments" => message,
         "link_names" => 1,
         "username" => "ReleaseHub",
+        "as_user" => false,
         "icon_url" => LOGO_URL
       })
     end
