@@ -49,11 +49,12 @@
 
   .form-group.form-header-underline
     %h4.col-sm-3.form-header.control-label
-      %a.plus-link{:href => "#", "data-placement" => "bottom", "data-toggle" => "tooltip", :title => "Click to add more projects",}
-        %i.fa.fa-plus-circle
       Application(s)
-    .col-sm-5.small-header
-      The order of the apps submitted would be the order for OPS to deploy.
+    .col-sm-5
+      %a.add-projects.btn.btn-success.btn-sm.ladda-button{"data-placement" => "right", "data-toggle" => "tooltip", :title => "Add more projects", "data-style" => "expand-left"}
+        %span.ladda-label Add
+      %span.help-block
+        The order of the apps submitted would be the order for OPS to deploy.
 
   .github-info-container.form-header-underline
     #app-area.row
@@ -121,9 +122,15 @@
       changeSha($(this));
     });
 
-    // plus form
-    $('.plus-link').click(function(e){
+    // add form
+    $('.add-projects').click(function(e){
+      e.preventDefault();
+      var l = Ladda.create(this);
+      l.start();
       $('#app-area').append('#{j render 'shared/project_form', project: nil}');
+      window.scrollTo(0,document.body.scrollHeight);
+      l.stop();
+      return false;
     });
 
   });
