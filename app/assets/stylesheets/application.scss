@@ -10,6 +10,7 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
+ *= require imports
  *= require nprogress
  *= require nprogress-bootstrap
  *= require ladda-themeless.min
@@ -21,7 +22,3 @@
  *= require clean
  *= require pnotify.custom.min
  */
-@import "bootstrap-sprockets";
-@import "bootstrap";
-@import "font-awesome-sprockets";
-@import "font-awesome";
