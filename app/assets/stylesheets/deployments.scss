@@ -8,3 +8,11 @@
 .word-wrap {
   word-wrap: break-word;
 }
+
+.CodeMirror {
+  border: 1px solid #eee;
+  height: auto;
+}
+.CodeMirror-scroll {
+ height: auto;
+}

@@ -30,13 +30,13 @@
     .form-group
       %label.col-sm-3.control-label{:for => "Deployment Instructions"} Deployment Instructions
       .col-sm-7
-        %textarea.form-control{:rows => "5", :name => "deployment[projects][deployment_instructions][]", :required => "", :placeholder => "Please specify carefully"}= project ? project.deployment_instruction : nil
+        %textarea.deploy-instruction.form-control{:rows => "5", :name => "deployment[projects][deployment_instructions][]", :placeholder => "Please specify carefully"}= project ? project.deployment_instruction : nil
         .help-block.with-errors
 
     .form-group
       %label.col-sm-3.control-label{:for => "Rollback Instructions"} Rollback Instructions
       .col-sm-7
-        %textarea.form-control{:rows => "5", :name => "deployment[projects][rollback_instructions][]", :required => "", :placeholder => "Please specify carefully"}= project ? project.rollback_instruction : nil
+        %textarea.rollback-instruction.form-control{:rows => "5", :name => "deployment[projects][rollback_instructions][]", :placeholder => "Please specify carefully"}= project ? project.rollback_instruction : nil
         .help-block.with-errors
       .col-sm-1
         %a.trash{:href => "#"}
@@ -57,29 +57,6 @@
     // remove form
     $('.trash').click(function(e){
       $(this).parents('.projects-wrap')[0].remove();
-    });
-
-    // enable tab
-    $("textarea").keydown(function(e) {
-      if(e.keyCode === 9) { // tab was pressed
-          // get caret position/selection
-          var start = this.selectionStart;
-          var end = this.selectionEnd;
-
-          var $this = $(this);
-          var value = $this.val();
-
-          // set textarea value to: text before caret + tab + text after caret
-          $this.val(value.substring(0, start)
-                      + "\t"
-                      + value.substring(end));
-
-          // put caret at right position again (add one for the tab)
-          this.selectionStart = this.selectionEnd = start + 1;
-
-          // prevent the focus lose
-          e.preventDefault();
-      }
     });
 
     // sync branches from github
@@ -125,6 +102,24 @@
 
     $('.repository').keydown(function(){
       clearTimeout(typingTimer);
+    });
+
+    var deployElements = document.getElementsByClassName("deploy-instruction");
+    var lastDeployElement = deployElements[deployElements.length - 1];
+
+    var rollbackElements = document.getElementsByClassName("rollback-instruction");
+    var lastRollbackElement = rollbackElements[rollbackElements.length - 1];
+
+    CodeMirror.fromTextArea(lastDeployElement, {
+      tabSize: 2,
+      lineWrapping: true,
+      smartIndent: false
+    });
+
+    CodeMirror.fromTextArea(lastRollbackElement, {
+      tabSize: 2,
+      lineWrapping: true,
+      smartIndent: false
     });
 
   });

@@ -1,3 +1,6 @@
+= javascript_include_tag "codemirror"
+= stylesheet_link_tag "codemirror"
+
 .row
   .col-lg-12
     %h1.page-header Make a Release Request
@@ -51,7 +54,7 @@
     %h4.col-sm-3.form-header.control-label
       Application(s)
     .col-sm-5
-      %a.add-projects.btn.btn-success.btn-sm.ladda-button{"data-placement" => "right", "data-toggle" => "tooltip", :title => "Add more projects", "data-style" => "expand-left"}
+      %a.add-projects.btn.btn-success.btn-sm.ladda-button{"data-placement" => "right", "data-toggle" => "tooltip", :title => "Add more projects", "data-style" => "expand-left", "data-form-count" => @deployment.projects.size}
         %span.ladda-label Add
       %span.help-block
         The order of the apps submitted would be the order for OPS to deploy.
@@ -59,10 +62,10 @@
   .github-info-container.form-header-underline
     #app-area.row
       - if !@deployment.projects.empty?
-        - @deployment.projects.each do |project|
-          = render "shared/project_form", project: project
+        - @deployment.projects.each_with_index do |project, index|
+          = render "shared/project_form", project: project, form_id: index
       - else
-        = render "shared/project_form", project: nil
+        = render "shared/project_form", project: nil, form_id: 0
 
   .form-group
     .col-sm-offset-2.col-sm-1
@@ -127,8 +130,10 @@
       e.preventDefault();
       var l = Ladda.create(this);
       l.start();
-      $('#app-area').append('#{j render 'shared/project_form', project: nil}');
+      var form_id = $(this).data('form-count') + 1;
+      $('#app-area').append('#{j render 'shared/project_form', project: nil, form_id: 0}');
       window.scrollTo(0,document.body.scrollHeight);
+      $(this).data('form-count', form_id);
       l.stop();
       return false;
     });
