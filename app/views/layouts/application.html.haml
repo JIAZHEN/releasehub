@@ -2,7 +2,7 @@
 %html
   %head
     %meta{:content => "width=device-width, initial-scale=1", :name => "viewport"}/
-    %title= @unread_count.zero? ? "ReleaseHub" : "(#{@unread_count}) ReleaseHub"
+    %title= (@unread_count.nil? || @unread_count.zero?) ? "ReleaseHub" : "(#{@unread_count}) ReleaseHub"
     = stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true
     = javascript_include_tag "application", "data-turbolinks-track" => true
     = favicon_link_tag "favicon.png"

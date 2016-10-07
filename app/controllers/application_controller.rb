@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
   include SlackHelper
 
   before_action :require_authentication
-  before_action :new_deployment_count
+  before_action :new_deployment_count, if: :authenticated?
 
   private
 
