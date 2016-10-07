@@ -24,4 +24,6 @@
 //= require datepicker
 //= require pusher.min
 //= require pnotify.custom.min
+//= require favico-0.3.10.min
+//= require codemirror
 //= require deployments

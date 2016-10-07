@@ -2,14 +2,27 @@
 %html
   %head
     %meta{:content => "width=device-width, initial-scale=1", :name => "viewport"}/
-    %title= (@unread_count.nil? || @unread_count.zero?) ? "ReleaseHub" : "(#{@unread_count}) ReleaseHub"
+    %title ReleaseHub
+    %link{:href => image_path("favicon.ico"), :rel => "icon", :sizes => "16x16"}/
     = stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true
     = javascript_include_tag "application", "data-turbolinks-track" => true
-    = favicon_link_tag "favicon.png"
     = csrf_meta_tags
 
     - if authenticated?
       :javascript
+        var favicon = new Favico({
+            animation : 'popFade',
+            position : 'up'
+        });
+        var unread_count = #{@unread_count.to_i};
+
+        if (unread_count !== 0) {
+          favicon.badge(unread_count);
+        } else {
+          favicon.reset();
+        }
+
+
         var pusher = new Pusher('#{Pusher.key}', {
           cluster: '#{ENV["PUSHER_CLUSTER"]}',
           encrypted: true
@@ -38,8 +51,13 @@
             });
           }
 
-          document.title = "(" + data.unread_count + ") ReleaseHub";
+          if (data.unread_count !== 0) {
+            favicon.badge(data.unread_count);
+          } else {
+            favicon.reset();
+          }
         });
+
 
   %body
     #wrapper
