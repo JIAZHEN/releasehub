@@ -51,6 +51,24 @@
         .help-block.with-errors
 
 :javascript
+  var deployElements = document.getElementsByClassName("deploy-instruction");
+  var lastDeployElement = deployElements[deployElements.length - 1];
+
+  var rollbackElements = document.getElementsByClassName("rollback-instruction");
+  var lastRollbackElement = rollbackElements[rollbackElements.length - 1];
+
+  CodeMirror.fromTextArea(lastDeployElement, {
+    tabSize: 2,
+    lineWrapping: true,
+    smartIndent: false
+  });
+
+  CodeMirror.fromTextArea(lastRollbackElement, {
+    tabSize: 2,
+    lineWrapping: true,
+    smartIndent: false
+  });
+
   $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
 
@@ -103,23 +121,4 @@
     $('.repository').keydown(function(){
       clearTimeout(typingTimer);
     });
-
-    var deployElements = document.getElementsByClassName("deploy-instruction");
-    var lastDeployElement = deployElements[deployElements.length - 1];
-
-    var rollbackElements = document.getElementsByClassName("rollback-instruction");
-    var lastRollbackElement = rollbackElements[rollbackElements.length - 1];
-
-    CodeMirror.fromTextArea(lastDeployElement, {
-      tabSize: 2,
-      lineWrapping: true,
-      smartIndent: false
-    });
-
-    CodeMirror.fromTextArea(lastRollbackElement, {
-      tabSize: 2,
-      lineWrapping: true,
-      smartIndent: false
-    });
-
   });
