@@ -3,6 +3,7 @@ class CreateProjects < ActiveRecord::Migration
     create_table :projects do |t|
       t.integer :deployment_id
       t.integer :branch_id
+      t.integer :deployment_order
       t.string :sha
       t.string :deployment_instruction
       t.string :rollback_instruction

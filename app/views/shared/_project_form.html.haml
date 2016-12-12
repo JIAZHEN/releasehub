@@ -8,6 +8,17 @@
         .help-block.with-errors
 
     .form-group
+      %label.col-sm-3.control-label{:for => "deployment_order"} Deployment Order
+      .col-sm-3
+        %select.order_options.form-control{:name => "deployment[projects][deployment_orders][]", :required => "", :placeholder => "Put the order number to deploy"}
+          - if project
+            - project.deployment.projects.each do | each_project |
+              %option{:value => each_project.deployment_order, :selected => each_project.deployment_order == project.deployment_order ? "selected" : nil}= each_project.deployment_order
+          - else
+            %option{:value => 1 } 1
+        .help-block.with-errors
+
+    .form-group
       %label.col-sm-3.control-label{:for => "branch"} Branch
       .col-sm-5
         %select.branch.form-control{:name => "deployment[projects][branches][]", :required => ""}
@@ -57,7 +68,9 @@
     // remove form
     $('.trash').click(function(e){
       $(this).parents('.projects-wrap')[0].remove();
+
     });
+
 
     // enable tab
     $("textarea").keydown(function(e) {

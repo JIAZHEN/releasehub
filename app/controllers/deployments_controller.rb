@@ -7,6 +7,7 @@ class DeploymentsController < ApplicationController
   D_IST_IDX = 2
   R_IST_IDX = 3
   BRANCH_NAME_IDX = 4
+  DEP_ORD = 5
 
   SEARCH_KEYS = {
     "release" => "releases.summary",
@@ -30,7 +31,8 @@ class DeploymentsController < ApplicationController
           :branch_id => project[BRANCH_ID_IDX],
           :sha => project[SHA_IDX],
           :deployment_instruction => project[D_IST_IDX],
-          :rollback_instruction => project[R_IST_IDX])
+          :rollback_instruction => project[R_IST_IDX],
+          :deployment_order => project[DEP_ORD])
       end
 
       flash[:success] = "Thank you, the request has been submitted. It should be deployed shortly."
@@ -152,7 +154,8 @@ class DeploymentsController < ApplicationController
                         projects["shas"],
                         projects["deployment_instructions"],
                         projects["rollback_instructions"],
-                        projects["branch_names"])
+                        projects["branch_names"],
+                        projects["deployment_orders"])
   end
 
   def all_master_if_production?

@@ -104,7 +104,7 @@
     });
 
     $('input.notify.typeahead').typeahead({
-      source: #{slack_notify_list},
+
       autoSelect: true,
       limit: 10,
       updater: function(item){
@@ -122,12 +122,25 @@
       changeSha($(this));
     });
 
+
     // add form
     $('.add-projects').click(function(e){
       e.preventDefault();
       var l = Ladda.create(this);
       l.start();
       $('#app-area').append('#{j render 'shared/project_form', project: nil}');
+      $('#app-area .projects-wrap .order_options').each(function() {
+        var project = $('#app-area .projects-wrap:last')
+          $( this ).append($('<option>', {value:(($('#app-area .projects-wrap')
+            .index(project))+1), text:(($('#app-area .projects-wrap')
+              .index(project))+1)}));
+      })
+      $('#app-area .projects-wrap:last .order_options').each(function() {
+        $( this ).empty('<option value=')
+          for (var i = 1; i <= ($('#app-area .projects-wrap').length); i++) {
+            $( this ).append($('<option>', {value: i, text: i}));
+          }
+      })
       window.scrollTo(0,document.body.scrollHeight);
       l.stop();
       return false;

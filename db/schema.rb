@@ -59,6 +59,7 @@ ActiveRecord::Schema.define(version: 20151227110430) do
   create_table "projects", force: :cascade do |t|
     t.integer  "deployment_id",          limit: 4
     t.integer  "branch_id",              limit: 4
+    t.integer  "deployment_order",       limit: 4
     t.string   "sha",                    limit: 255
     t.text     "deployment_instruction", limit: 65535
     t.text     "rollback_instruction",   limit: 65535
