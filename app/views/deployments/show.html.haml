@@ -71,6 +71,10 @@
         %p= markdown.render(project.rollback_instruction).html_safe
         %hr
 
+        %label Deployment Order
+        %p= project.deployment_order
+        %hr
+
 :javascript
   $(document).ready(function(){
     $("select[name='status']").change(function() {
