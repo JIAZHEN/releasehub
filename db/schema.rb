@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151227110430) do
+ActiveRecord::Schema.define(version: 20161214173338) do
 
   create_table "branches", force: :cascade do |t|
     t.integer  "repository_id", limit: 4
@@ -64,6 +64,7 @@ ActiveRecord::Schema.define(version: 20151227110430) do
     t.text     "rollback_instruction",   limit: 65535
     t.datetime "created_at",                           null: false
     t.datetime "updated_at",                           null: false
+    t.integer  "deployment_order",       limit: 4
   end
 
   add_index "projects", ["branch_id"], name: "index_projects_on_branch_id", using: :btree

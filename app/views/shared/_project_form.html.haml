@@ -8,6 +8,19 @@
         .help-block.with-errors
 
     .form-group
+      %label.col-sm-3.control-label{:for => "deployment_order"} Deployment Order
+      .col-sm-3
+        %select.order_options.form-control{:name => "deployment[projects][deployment_orders][]", :required => "", :placeholder => "Put the order number to deploy"}
+          - if project
+            %option{:value => ""} Select
+            - project.deployment.projects.each do | each_project |
+              %option{:value => each_project.deployment_order, :selected => each_project.deployment_order == project.deployment_order ? "selected" : nil}= each_project.deployment_order
+          - else
+            %option{:value => ""} Select
+            %option{:value => 1} 1
+        .help-block.with-errors
+
+    .form-group
       %label.col-sm-3.control-label{:for => "branch"} Branch
       .col-sm-5
         %select.branch.form-control{:name => "deployment[projects][branches][]", :required => ""}
@@ -57,7 +70,24 @@
     // remove form
     $('.trash').click(function(e){
       $(this).parents('.projects-wrap')[0].remove();
+      $('#app-area .projects-wrap .order_options').each(function() {
+        $(this).empty('<option value=')
+        $(this).append($('<option>', {value: ""}))
+        for (var i = 1; i <= ($('#app-area .projects-wrap').length); i++) {
+          $(this).append($('<option>', {value: i, text: i}));
+        }
+      })
     });
+    $('#app-area .projects-wrap .order_options').change(function() {
+        if (this.value != ""){
+            $('.order_options').not(this)
+                .children('option[value=' + this.value + ']')
+                .attr('disabled', true);
+        } else {
+          $('.order_options').find('option:disabled').removeAttr('disabled');
+        }
+    });
+
 
     // enable tab
     $("textarea").keydown(function(e) {
@@ -126,5 +156,7 @@
     $('.repository').keydown(function(){
       clearTimeout(typingTimer);
     });
+
+
 
   });

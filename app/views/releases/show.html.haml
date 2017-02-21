@@ -71,6 +71,10 @@
                             %label Rollback Instruction
                             %p= project.rollback_instruction
                             %hr
+
+                            %label Deployment Order
+                            %p= project.deployment_order
+                            %hr
               %td= deployment.created_at.strftime("%Y-%m-%d %H:%M:%S")
               - if ops?
                 %td

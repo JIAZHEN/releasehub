@@ -184,7 +184,6 @@ GEM
       addressable (~> 2.3.5)
       faraday (~> 0.8, < 0.10)
     sexp_processor (4.5.1)
-    spring (1.3.5)
     sprockets (3.5.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -232,11 +231,10 @@ DEPENDENCIES
   redcarpet
   rspec-rails
   sass-rails
-  spring
   therubyracer
   turbolinks
   uglifier
   webmock
 
 BUNDLED WITH
-   1.12.5
+   1.13.5

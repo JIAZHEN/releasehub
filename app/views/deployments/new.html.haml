@@ -66,7 +66,7 @@
 
   .form-group
     .col-sm-offset-2.col-sm-1
-      %button.btn.btn-success{:type => "submit"} Submit
+      %button.btn.btn-success.submit-form-button{:type => "submit"} Submit
 
 :javascript
   $(document).ready(function(){
@@ -122,15 +122,68 @@
       changeSha($(this));
     });
 
+    // check deployment order uniqueness
+
+    $('.submit-form-button').click(function(e){
+      var array = $('#app-area .projects-wrap .order_options').find('option:selected')
+      if (!hasNoDuplicates(array)){
+        alert("Deployment order must be unique!");
+        e.preventDefault();
+        window.open("", "_self");
+      }
+    });
+
+
     // add form
     $('.add-projects').click(function(e){
       e.preventDefault();
       var l = Ladda.create(this);
       l.start();
       $('#app-area').append('#{j render 'shared/project_form', project: nil}');
+      $('#app-area .projects-wrap .order_options').each(function() {
+        var project = $('#app-area .projects-wrap:last')
+        $(this).append($('<option>', {value:(($('#app-area .projects-wrap')
+          .index(project))+1), text:(($('#app-area .projects-wrap')
+          .index(project))+1)}));
+      })
+      $('#app-area .projects-wrap:last .order_options').each(function() {
+        $(this).empty('<option value=')
+        $(this).append($('<option>', {value: "", text: "Select"}))
+        for (var i = 1; i <= ($('#app-area .projects-wrap').length); i++) {
+          $(this).append($('<option>', {value: i, text: i}));
+        }
+      })
+      $('#app-area .projects-wrap:last .order_options').mousedown(function() {
+        var selectedOptions = $('#app-area .projects-wrap .order_options')
+          .find('option:selected');
+        var array = numbersArray(selectedOptions);
+          for (var m = 0; m <= array.length-1; m++ ){
+            $(this)
+              .find('option[value=' + array[m] + ']')
+              .attr('disabled', true);
+          }
+      })
       window.scrollTo(0,document.body.scrollHeight);
       l.stop();
       return false;
     });
+
+    function numbersArray(selectedOptions){
+      var array = [];
+      for (var i = 0; i <= (selectedOptions.length-1); i++){
+        if ( selectedOptions[i]['value']!= ""){
+          array.push(selectedOptions[i]['value']);
+        }
+      }return array;
+     };
+
+    function hasNoDuplicates(arr){
+      var map = {}, i, size;
+      for (i = 0, size = arr.length; i < size; i++){
+        if (map[arr[i]['value']]){
+          return false;
+        }map[arr[i]['value']] = true;
+       }return true;
+     }
 
   });
