@@ -19,8 +19,6 @@
           %th Deployments
           %th Status
           %th Created
-          - if ops?
-            %th Operations
       %tbody
         - @releases.each do |release|
           %tr{:class => status_colour(release), :id => release.id}
@@ -30,11 +28,6 @@
             %td= link_to release.deployments.size, release_path(release)
             %td{:id => "release-#{release.id}-status"}= release.status.name
             %td= release.created_at.strftime("%Y-%m-%d %H:%M:%S")
-            - if ops?
-              %td
-                %select{:name => "status"}
-                  - @releases_status.each do |status|
-                    %option{:value => status.id, :selected => release.status == status ? "selected" : nil}= status.name
 
 = paginate @releases
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161214173338) do
+ActiveRecord::Schema.define(version: 20170608094549) do
 
   create_table "branches", force: :cascade do |t|
     t.integer  "repository_id", limit: 4
@@ -85,6 +85,7 @@ ActiveRecord::Schema.define(version: 20161214173338) do
 
   create_table "repositories", force: :cascade do |t|
     t.string   "name",       limit: 255
+    t.string   "puppet_tag", limit: 255
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
   end

@@ -11,7 +11,7 @@ default: &default
   pool: 5
   username: root
   timeout: 5000
-  socket: /tmp/mysql.sock
+  host: 127.0.0.1
 
 development:
   <<: *default
@@ -20,7 +20,3 @@ development:
 test:
   <<: *default
   database: releasehub_test
-
-production:
-  <<: *default
-  database: db/production.sqlite3
