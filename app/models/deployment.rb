@@ -27,6 +27,6 @@ class Deployment < ActiveRecord::Base
   OPS = Array(ENV["ADMIN_MEMBERS"].try(:split, ","))
 
   def deployable_by?(username)
-    true || OPS.include?(username) || environment.qa?
+    OPS.include?(username) || environment.qa?
   end
 end
