@@ -18,23 +18,26 @@
           %p= deployment.release.summary
           %br/
 
-          - if ops?
-            %h4 Operations commands
-            - projects.each do |project|
-              %p.project-command
-                - if deployment.environment.production?
-                  = "#{deployment.environment.name} #{project.repository.name} #{project.sha}"
-                - else
-                  = "#{deployment.environment.name} #{project.repository.name} #{project.branch.name}"
+          - if deployment.deployable_by?(current_username)
+            %h4 Standard deploy commands
+            - deployment.projects.each do |project|
+              - if project.deploy_commands.none?
+                %p No quick deploy commands available - talk to Ops.
+                %p.project-command
+                  - if deployment.environment.production?
+                    = "#{deployment.environment.name} #{project.repository.name} #{project.sha}"
+                  - else
+                    = "#{deployment.environment.name} #{project.repository.name} #{project.branch.name}"
+              - project.deploy_commands.each do |deploy_command|
+                %pre= deploy_command
 
-
-            %h4 Operations
-            .status-select
-              %select{:name => "status", :id => "model-deployment-status#{deployment.id}", "data-deployment" => deployment.id}
-                - @deployment_status.each do |status|
-                  %option{:value => status.id, :selected => deployment.status == status ? "selected" : nil}= status.name
-              %button.next-status.btn.btn-success.btn-sm.ladda-button{"data-placement" => "bottom", "data-toggle" => "tooltip", :title => "Update when branch is not listed", "data-style" => "expand-left", "data-next-status" => deployment.status.next, "data-deployment" => deployment.id,  :disabled => ("disabled" if deployment.status.next.nil?)}
-                %span.ladda-label Next status
+              %h4 Operations
+              .status-select
+                %select{:name => "status", :id => "model-deployment-status#{deployment.id}", "data-deployment" => deployment.id}
+                  - @deployment_status.each do |status|
+                    %option{:value => status.id, :selected => deployment.status == status ? "selected" : nil}= status.name
+                %button.next-status.btn.btn-success.btn-sm.ladda-button{"data-placement" => "bottom", "data-toggle" => "tooltip", :title => "Update when branch is not listed", "data-style" => "expand-left", "data-next-status" => deployment.status.next, "data-deployment" => deployment.id,  :disabled => ("disabled" if deployment.status.next.nil?)}
+                  %span.ladda-label Next status
 
 
           - projects.each do |project|
@@ -51,13 +54,13 @@
               %code= project.sha
             %br
 
+            %label Deployment Order
+            %code= project.deployment_order
+            %br
+
             %label Deployment Instruction
             %p= markdown.render(project.deployment_instruction).html_safe
 
             %label Rollback Instruction
             %p= markdown.render(project.rollback_instruction).html_safe
-            %hr
-
-            %label Deployment Order
-            %p= project.deployment_order
             %hr
