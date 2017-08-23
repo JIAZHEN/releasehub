@@ -43,7 +43,8 @@
                 %mark= project.repository.name
 
             %label Branch
-            %code= project.branch.name
+            %a{:href => branch_url(project.repository.name, project.branch.name)}
+              %code= project.branch.name
             %br
 
             %label SHA
