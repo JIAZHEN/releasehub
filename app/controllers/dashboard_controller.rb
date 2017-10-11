@@ -7,7 +7,7 @@ class DashboardController < ApplicationController
       @lastest_deployments = Deployment.includes(:operation_logs, :status, :release, :environment, projects: [branch: [:repository]]).
         where("status_id IN (?)", [Status::WAIT_TO_DEPLOY, Status::DEPLOYING]).all
       @boxes_info = stagingnow
-      @deployment_status = Status.deployment_status
+      @deployment_status = Status.deployment_status if ops?
     end
   end
 

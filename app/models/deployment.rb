@@ -23,10 +23,4 @@ class Deployment < ActiveRecord::Base
   def last_operator
     operation_logs.last
   end
-
-  OPS = Array(ENV["ADMIN_MEMBERS"].try(:split, ","))
-
-  def deployable_by?(username)
-    OPS.include?(username) || environment.qa?
-  end
 end
