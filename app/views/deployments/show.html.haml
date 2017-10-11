@@ -31,8 +31,7 @@
       %h4 Notification list
       %p= @deployment.notification_list
 
-  - if @deployment.deployable_by?(current_username)
-    .row
+    - if ops?
       .summary.col-lg-4
         %h4 Operations
         %select{:name => "status"}
@@ -40,21 +39,18 @@
             %option{:value => status.id, :selected => @deployment.status == status ? "selected" : nil}= status.name
         %button.next-status.btn.btn-success.btn-sm.ladda-button{"data-placement" => "bottom", "data-toggle" => "tooltip", :title => "Update when branch is not listed", "data-style" => "expand-left", "data-next-status" => @deployment.status.next, :disabled => ("disabled" if @deployment.status.next.nil?)}
           %span.ladda-label Next status
-      .summary.col-lg-8
-        %h4 Standard deploy commands
+      .summary.col-lg-4
+        %h4 Operations commands
         - @deployment.projects.each do |project|
-          - if project.deploy_commands.none?
-            %p No quick deploy commands available - talk to Ops.
-            %p.project-command
-              - if @deployment.environment.production?
-                = "#{@deployment.environment.name} #{project.repository.name} #{project.sha}"
-              - else
-                = "#{@deployment.environment.name} #{project.repository.name} #{project.branch.name}"
-          - project.deploy_commands.each do |deploy_command|
-            %pre= deploy_command
+          %p.project-command
+            - if @deployment.environment.production?
+              = "#{@deployment.environment.name} #{project.repository.name} #{project.sha}"
+            - else
+              = "#{@deployment.environment.name} #{project.repository.name} #{project.branch.name}"
+
   .row
     - @deployment.projects.each do |project|
-      .col-lg-12
+      .col-lg-4
         %h4
           %a{:href => "https://github.com/#{ReleasesHelper::ORGANISATION}/#{project.repository.name}"}
             %mark= project.repository.name
@@ -68,15 +64,15 @@
           %code= project.sha
         %br
 
-        %label Deployment Order
-        %code= project.deployment_order
-        %br
-
         %label Deployment Instruction
         %p= markdown.render(project.deployment_instruction).html_safe
 
         %label Rollback Instruction
         %p= markdown.render(project.rollback_instruction).html_safe
+        %hr
+
+        %label Deployment Order
+        %p= project.deployment_order
         %hr
 
 :javascript

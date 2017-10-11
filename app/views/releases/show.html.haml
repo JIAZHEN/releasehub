@@ -25,6 +25,8 @@
             %th Dev
             %th Projects
             %th Created At
+            - if ops?
+              %th Operations
         %tbody
           - @release.deployments.each do |deployment|
             %tr{:class => status_colour(deployment)}
@@ -74,6 +76,11 @@
                             %p= project.deployment_order
                             %hr
               %td= deployment.created_at.strftime("%Y-%m-%d %H:%M:%S")
+              - if ops?
+                %td
+                  %select{:name => "status"}
+                    - @deployment_status.each do |status|
+                      %option{:value => status.id, :selected => deployment.status == status ? "selected" : nil}= status.name
 
 :javascript
   $(document).ready(function(){

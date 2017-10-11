@@ -3,6 +3,7 @@ module SessionsHelper
   CLIENT_ID = ENV["GITHUB_CLIENT_ID"]
   CLIENT_SECRET = ENV["GITHUB_CLIENT_SECRET"]
   ADMIN_ACCESS_TOKEN = ENV["GITHUB_ACCESS_TOKEN"]
+  OPS = Set.new ENV["ADMIN_MEMBERS"].try(:split, ",")
 
   def scopes
     "user:email".freeze
@@ -43,6 +44,10 @@ module SessionsHelper
 
   def current_username
     current_user.slack_username
+  end
+
+  def ops?
+    OPS.include?(current_username)
   end
 
   def organisation_permit?(login)

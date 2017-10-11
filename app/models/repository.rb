@@ -6,8 +6,4 @@ class Repository < ActiveRecord::Base
   def active_branches
     branches.where(:active => true).order(name: :asc)
   end
-
-  def wld?
-    name == "wld"
-  end
 end

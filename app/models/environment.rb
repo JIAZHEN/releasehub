@@ -1,11 +1,9 @@
 class Environment < ActiveRecord::Base
   validates :name, presence: true, length: { maximum: 15 }
 
-  def production?
-    name == "production"
-  end
+  PRODUCTION = "production"
 
-  def qa?
-    name =~ /^qa/
+  def production?
+    name == PRODUCTION
   end
 end

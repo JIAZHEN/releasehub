@@ -8,8 +8,4 @@ class Project < ActiveRecord::Base
   belongs_to :branch
 
   delegate :repository, :to => :branch
-
-  def deploy_commands
-    @deploy_commands ||= DeployCommand.for(deployment.environment, repository, branch)
-  end
 end
