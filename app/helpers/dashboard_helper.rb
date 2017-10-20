@@ -27,4 +27,8 @@ module DashboardHelper
     "https://github.com/#{ReleasesHelper::ORGANISATION}/#{repo}/commit/#{sha}"
   end
 
+  def branch_url(repo, branch)
+    "https://github.com/#{ReleasesHelper::ORGANISATION}/#{repo}/pull/#{branch}"
+  end
+
 end

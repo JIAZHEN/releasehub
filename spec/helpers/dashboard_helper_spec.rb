@@ -47,4 +47,15 @@ RSpec.describe DashboardHelper, type: :helper do
       expect(helper.sha_url(repo, sha)).to eq("https://github.com/release/hub/commit/123456")
     end
   end
+
+  describe "#branch_url" do
+    let(:repo) { "hub" }
+    let(:branch) { "pb-2137-toggle" }
+
+    before { stub_const("ReleasesHelper::ORGANISATION", "release") }
+
+    it "returns the right branch based on repo and branch" do
+      expect(helper.branch_url(repo, branch)).to eq("https://github.com/release/hub/pull/pb-2137-toggle")
+    end
+  end
 end
