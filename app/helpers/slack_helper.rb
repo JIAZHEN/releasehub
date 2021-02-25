@@ -5,7 +5,8 @@ module SlackHelper
   LOGO_URL = "https://dl.dropboxusercontent.com/u/44435189/releasehub-logo-48.png"
   SLACK_CHAT_URL = "https://slack.com/api/chat.postMessage"
   SLACK_USER_LIST_URL = "https://slack.com/api/users.list"
-  SLACK_CHANNEL_LIST_URL = "https://slack.com/api/channels.list"
+  SLACK_CHANNEL_LIST_URL = "https://slack.com/api/conversations.list"
+  SLACK_CHANNEL_TYPES = "public_channel"
 
   def slack_post(channels, message)
     uri = URI.parse(SLACK_CHAT_URL)
@@ -29,7 +30,7 @@ module SlackHelper
       users = JSON.parse(res.body)["members"].map{ |member| {"name" => "@#{member["name"]}"} }
 
       uri = URI.parse(SLACK_CHANNEL_LIST_URL)
-      res = Net::HTTP.post_form(uri, "token" => SLACK_TOKEN, "exclude_archived" => 1)
+      res = Net::HTTP.post_form(uri, "token" => SLACK_TOKEN, "exclude_archived" => 1, "types" => SLACK_CHANNEL_TYPES)
       channels = JSON.parse(res.body)["channels"].map{ |channel| {"name" => "##{channel["name"]}"} }
 
       (users + channels).to_json
